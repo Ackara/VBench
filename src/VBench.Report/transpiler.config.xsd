@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="https://raw.githubusercontent.com/Ackara/Traneleon/master/src/Traneleon/traneleon.xsd" elementFormDefault="qualified" targetNamespace="https://raw.githubusercontent.com/Ackara/Traneleon/master/src/Traneleon/traneleon.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="project" nillable="true" type="tns:Project" />
+  <xs:complexType name="Project">
+    <xs:annotation>
+      <xs:documentation>Represents project configuration file.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="ignored-folders" type="tns:ArrayOfString" />
+      <xs:element minOccurs="0" maxOccurs="1" name="sass" type="tns:SassItemGroup">
+        <xs:annotation>
+          <xs:documentation>Gets or sets the sass item group.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" maxOccurs="1" name="image" type="tns:ImageItemGroup" />
+      <xs:element minOccurs="0" maxOccurs="1" name="typescript" type="tns:TypescriptItemGroup" />
+      <xs:element minOccurs="0" maxOccurs="1" name="dotnet-to-typescript" type="tns:TSDeclarationItemGroup" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>Gets or sets the name.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="output-directory" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="ArrayOfString">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="folder" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="SassItemGroup">
+    <xs:annotation>
+      <xs:documentation>Represents a sass configuration node.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:ItemGroupBase">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="include" type="tns:SassItemGroupBundle" />
+          <xs:element minOccurs="0" maxOccurs="1" name="exclude" type="tns:ArrayOfString1" />
+        </xs:sequence>
+        <xs:attribute default="true" name="minify" type="xs:boolean" />
+        <xs:attribute default="false" name="keepIntermediateFiles" type="xs:boolean" />
+        <xs:attribute default="true" name="sourceComments" type="xs:boolean" />
+        <xs:attribute default="true" name="generateSourceMaps" type="xs:boolean" />
+        <xs:attribute name="sourceDirectory" type="xs:string" />
+        <xs:attribute default=".min" name="suffix" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ItemGroupBase" abstract="true">
+    <xs:attribute default="true" name="enable" type="xs:boolean" />
+    <xs:attribute name="outputDirectory" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="TSDeclarationItemGroup">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:ItemGroupBase">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="include" type="tns:TSDeclarationItemGroupBundle" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="TSDeclarationItemGroupBundle">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="pattern" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="output" type="xs:string" />
+    <xs:attribute name="prefix" type="xs:string" />
+    <xs:attribute name="suffix" type="xs:string" />
+    <xs:attribute name="namespace" type="xs:string" />
+    <xs:attribute default="true" name="use-camel-case" type="xs:boolean" />
+    <xs:attribute name="knockout-declaration-file" type="xs:string" />
+    <xs:attribute default="default" name="export-as" type="tns:TSDeclarationStyle" />
+    <xs:attribute name="exclude" type="xs:string" />
+  </xs:complexType>
+  <xs:simpleType name="TSDeclarationStyle">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="default" />
+      <xs:enumeration value="abstract" />
+      <xs:enumeration value="interface" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="TypescriptItemGroup">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:ItemGroupBase">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="include" type="tns:TypescriptItemGroupBundle" />
+          <xs:element minOccurs="0" maxOccurs="1" name="exclude" type="tns:ArrayOfString1" />
+        </xs:sequence>
+        <xs:attribute default="true" name="minify" type="xs:boolean" />
+        <xs:attribute default="false" name="keepIntermediateFiles" type="xs:boolean" />
+        <xs:attribute default="true" name="generateSourceMaps" type="xs:boolean" />
+        <xs:attribute name="sourceDirectory" type="xs:string" />
+        <xs:attribute default=".min" name="suffix" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="TypescriptItemGroupBundle">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="pattern" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="outFile" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="ArrayOfString1">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="pattern" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ImageItemGroup">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:ItemGroupBase">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="exclude" type="tns:ArrayOfString1" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="optimize" type="tns:ImageItemGroupOptimizationSettings" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ImageItemGroupOptimizationSettings">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="pattern" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute default=".min" name="suffix" type="xs:string" />
+    <xs:attribute default="80" name="quality" type="xs:int" />
+    <xs:attribute default="lossless" name="compression" type="tns:CompressionKind" />
+    <xs:attribute default="true" name="progressive" type="xs:boolean" />
+  </xs:complexType>
+  <xs:simpleType name="CompressionKind">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="lossless" />
+      <xs:enumeration value="lossy" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="SassItemGroupBundle">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="pattern" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="parent" type="xs:string" />
+  </xs:complexType>
+</xs:schema>

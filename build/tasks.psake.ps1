@@ -16,7 +16,6 @@ Properties {
     $ShouldCommitChanges = $true;
 	$CurrentBranch = "";
 	$Configuration = "";
-	$Secrets = @{ };
 	$Major = $false;
 	$Minor = $false;
 }
@@ -37,7 +36,7 @@ Task "Configure-Environment" -alias "configure" -description "This task generate
 	# Generating a secrets file template to store sensitive information.
 	if (-not (Test-Path $SecretsFilePath))
 	{
-		$content = "{ nugetKey: null, mockarooKey: null }";
+		$content = "{ nugetKey: null, psGalleryKey: null }";
 		$content | ConvertTo-Json | Out-File $SecretsFilePath -Encoding utf8;
 	}
 	Write-Host "  * added '$(Split-Path $SecretsFilePath -Leaf)' to the solution.";
@@ -52,17 +51,6 @@ Task "Package-Solution" -alias "pack" -description "This task generates all depl
 	Join-Path $SolutionFolder "src/*/*" | Get-ChildItem -File -Filter "*.*proj" | Invoke-NugetPack $ArtifactsFolder $Configuration $version.FullVersion;
 }
 
-Task "Update-MockarooTypeList" -alias "types" -description "This task updates the list of existing mockaroo data-types." `
--action {
-	$tempFile = New-TemporaryFile;
-	$apikey = Get-Secret $SecretsFilePath "mockarooKey";
-	Invoke-WebRequest "https://api.mockaroo.com/api/types.json?key=$apikey" -OutFile $tempFile.FullName;
-	$results = Get-Content $tempFile.FullName | ConvertFrom-Json;
-
-	$targetFile = Join-Path $SolutionFolder "src/*/mockaroo_data_types.txt" | Get-Item;
-	$results.types | Select-Object -ExpandProperty name | Out-File $targetFile.FullName -Encoding utf8;
-	Write-Host "  * updated '$($targetFile.Name)'.";
-}
 
 #region ----- COMPILATION -----
 

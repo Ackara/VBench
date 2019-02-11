@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>VBench</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/site.min.css" />
+</head>
+<body>
+
+    <canvas id="chart"style="height:300px"
+            class="w100 pointer"></canvas>
+
+    <table id="chartEditor"
+           data-bind="with: chartEditor">
+        <thead>
+            <tr data-bind="foreach: options.columns">
+                <th class=""
+                    data-bind="text: name, css: { 'is-active': isSelected }"></th>
+            </tr>
+        </thead>
+
+        <tbody data-bind="foreach: options.rows">
+            <tr class="benchmark"
+                data-bind="foreach: values, css: { 'is-active': isSelected }">
+                <td class="cell"
+                    data-bind="css: { 'is-active': isSelected, 'is-numeric': isNumeric }">
+                    <div>
+                        <span data-bind="text: value"></span>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script id="data" type="application/json">
+        [{
+        "name": "Glob",
+        "totalTestRuns": 4,
+        "columns": [ { "name": "method" }, { "name": "testNo" }, { "name": "mean" }, { "name": "allocated" }, { "name": "param" } ],
+        "rows": [
+        { "values": [ "GlobN", 1, 1, 2, "A" ] },
+        { "values": [ "GlobN", 2, 2, 10, "A" ] },
+        { "values": [ "GlobN", 3, 3, 5, "A" ] },
+        { "values": [ "GlobN", 4, 8, 16, "A" ] },
+
+        { "values": [ "Regex", 1, 15, 5, "A" ] },
+        { "values": [ "Regex", 2, 15, 5, "A" ] },
+        { "values": [ "Regex", 3, 15, 5, "A" ] },
+        { "values": [ "Regex", 4, 15, 5, "A" ] }
+        ]
+        }, {
+        "name": "Compiler",
+        "totalTestRuns": 2,
+        "columns": [ { "name": "method" }, { "name": "testNo" }, { "name": "mean" }, { "name": "allocated" }, { "name": "param" } ],
+        "rows": [
+        { "values": [ "MD5", 1, 5, "skg", "yja" ] },
+        { "values": [ "SHA256", 1, 5, "lld", "vxf" ] }
+        ]
+        }]
+    </script>
+
+    <script type="text/javascript" src="node_modules/knockout/build/output/knockout-latest.js"></script>
+    <script type="text/javascript" src="node_modules/chart.js/dist/Chart.min.js"></script>
+    <script type="text/javascript" src="scripts/app.min.js" data-inline="true"></script>
+    <script type="text/javascript">
+        var vm = new VBench.HomePage();
+        ko.applyBindings(vm);
+    </script>
+</body>
+</html>

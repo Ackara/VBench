@@ -1,0 +1,10 @@
+﻿$color-1: #333a5d;
+$color-2: #f08519;
+$color-3: #1e1e1e;
+// ===== Site Colors ===== //
+$background-color: $color-3;
+$text-color: invert($color-3, 100);
+
+$accent-color-1: $color-1;
+$accent-color-2: $color-2;
+$hover-color: transparentize($color-2, 0.85);

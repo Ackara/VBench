@@ -1,0 +1,11 @@
+{
+  "version": "1.0.0",
+  "name": "vbench",
+  "private": true,
+  "dependencies": {
+    "knockout": "3.4.2",
+    "@types/knockout": "3.4.63",
+    "chart.js": "2.7.3",
+    "@types/chart.js": "2.7.43"
+  }
+}

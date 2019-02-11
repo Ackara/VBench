@@ -1,0 +1,51 @@
+﻿@import "../modules/_theme.scss";
+
+html, body {
+    color: $text-color;
+    background-color: $background-color;
+}
+
+// Containers
+// ===========================================================================
+
+%container {
+    display: flex;
+}
+
+.row {
+    @extend %container;
+}
+
+.column {
+    @extend %container;
+    flex-direction: column;
+}
+
+// Sizing & Spacing
+// ===========================================================================
+
+.w100 {
+    width: 100%;
+}
+
+%padding {
+    &.horizontal {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+}
+
+.p25 {
+    @extend %padding;
+    padding: 0.25em;
+}
+
+.p50 {
+    @extend %padding;
+    padding: 0.5em;
+}
+
+.p100 {
+    @extend %padding;
+    padding: 1em;
+}

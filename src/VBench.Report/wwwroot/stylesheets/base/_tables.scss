@@ -1,0 +1,43 @@
+﻿@import "../modules/_theme.scss";
+
+$cell-padding: 0.5em;
+
+th, td {
+    padding: $cell-padding;
+}
+
+.cell {
+    padding: 0;
+
+    & > * {
+        padding: $cell-padding;
+        border: 2px solid transparent;
+    }
+
+    &.is-numeric:not(:first-child):hover > * {
+        cursor: pointer;
+        border-color: $accent-color-2;
+    }
+
+    &.is-numeric.is-active:not(:first-child) > * {
+        background-color: $background-color;
+        border-color: lighten($accent-color-2, 10);
+    }
+}
+
+tbody {
+    tr {
+        transition: {
+            duration: 250ms;
+            property: background-color;
+        }
+
+        &:hover {
+            background-color: $hover-color;
+        }
+
+        &.is-active {
+            background-color: transparentize($accent-color-2, 0.2);
+        }
+    }
+}
