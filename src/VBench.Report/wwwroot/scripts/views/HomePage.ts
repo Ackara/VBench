@@ -8,17 +8,22 @@ namespace VBench {
     export class HomePage {
         constructor() {
             this._repository = new Repository();
+            let datasetNames: Array<string> = this._repository.fetchNamesOfAllDatasets();
+            this.datasetTabs = ko.observableArray(datasetNames);
+            this.selectedDataset = ko.observable(datasetNames[0]);
+
             this.chartEditor = new ChartEditor(this._repository);
-            this.chartEditor.changeDataset(this._repository.fetchNamesOfAllDatasets()[0]);
-
-            this.attachEventHandlers();
+            this.chartEditor.changeDataset(datasetNames[0]);
         }
-
-        private readonly _repository: Repository;
 
         public readonly chartEditor: ChartEditor;
 
-        private attachEventHandlers(): void {
+        public selectedDataset: KnockoutObservable<string>;
+        public datasetTabs: KnockoutObservableArray<string>;
+
+        private readonly _repository: Repository;
+
+        public attachEventHandlers(): void {
             let me = this;
             document.getElementById("chartEditor").addEventListener("click", function (e) {
                 let context = ko.contextFor(e.target);
@@ -35,6 +40,16 @@ namespace VBench {
             if (btn) {
                 btn.addEventListener("click", function (e) {
                     me.chartEditor.toggleChartLines();
+                });
+            }
+
+            let tabs = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].addEventListener("click", function (e) {
+                    let context = ko.contextFor(this);
+                    (<HTMLElement>this).classList.toggle("is-active");
+                    me.chartEditor.changeDataset(context.$data);
+                    me.selectedDataset(context.$data);
                 });
             }
         }

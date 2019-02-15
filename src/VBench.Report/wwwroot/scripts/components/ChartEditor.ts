@@ -25,9 +25,11 @@ namespace VBench {
         public changeDataset(datasetId: string): void {
             this._repository.fetchLastestBenchmark(datasetId, this.options);
 
+            this._lineChart.data.labels.splice(0, this._lineChart.data.labels.length);
             for (let i = 0; i < this.options.totalTestRuns; i++) {
                 this._lineChart.data.labels.push(`Run-${i + 1}`);
             }
+
             this._lineChart.update();
         }
 
@@ -78,22 +80,6 @@ namespace VBench {
             this._lineChart.update();
         }
 
-        private createSeriesBaseSettings(): Chart.ChartDataSets {
-            let color = this._colorPicker.newColor();
-
-            let config: Chart.ChartDataSets = {
-                steppedLine: "after",
-                pointHitRadius: 20,
-                showLine: this._linesEnabled,
-                borderColor: [color.getValue(0.75)],
-                pointRadius: (this._linesEnabled ? 5 : 20),
-                pointBorderWidth: (this._linesEnabled ? 15 : 6),
-                pointStyle: (this._linesEnabled ? "circle" : "line"),
-            };
-
-            return config;
-        }
-
         private createLineChart(): Chart {
             let labelColor = this._colorPicker.textColor.getValue(0.5);
             let gridLineColor = this._colorPicker.textColor.getValue(0.1);
@@ -122,6 +108,22 @@ namespace VBench {
                     }
                 }
             });
+        }
+
+        private createSeriesBaseSettings(): Chart.ChartDataSets {
+            let color = this._colorPicker.newColor();
+
+            let config: Chart.ChartDataSets = {
+                steppedLine: "after",
+                pointHitRadius: 20,
+                showLine: this._linesEnabled,
+                borderColor: [color.getValue(0.75)],
+                pointRadius: (this._linesEnabled ? 5 : 20),
+                pointBorderWidth: (this._linesEnabled ? 15 : 6),
+                pointStyle: (this._linesEnabled ? "circle" : "line"),
+            };
+
+            return config;
         }
     }
 }
