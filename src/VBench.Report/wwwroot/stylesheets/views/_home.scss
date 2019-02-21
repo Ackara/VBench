@@ -1,1 +1,42 @@
 ﻿@import "../modules/_theme.scss";
+
+.chart-description {
+    opacity: 0;
+    white-space: pre;
+    position: absolute;
+    line-height: 1.25em;
+    transform: translateY(10px);
+    background-color: $background-color;
+
+    transition: {
+        duration: 500ms;
+        timing-function: ease-in;
+        property: transform, opacity;
+    }
+}
+
+.chart header {
+    i {
+        opacity: 0.25;
+        transition: opacity 250ms;
+
+        &:before {
+            font-size: 12pt;
+            vertical-align: super;
+        }
+    }
+
+    &:hover i {
+        opacity: 1;
+    }
+}
+
+    .chart header:hover + .chart-description {
+        transform: translateY(-0.5em);
+        opacity: 1;
+    }
+
+select {
+    border: 1px solid transparent;
+    background-color: $background-color;
+}

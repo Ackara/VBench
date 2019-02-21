@@ -1,1 +1,46 @@
-﻿
+﻿@import "../modules/_theme.scss";
+
+body {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+%text {
+    font-size: 1em;
+}
+
+h1 {
+    @extend %text;
+    font-size: 3.1em;
+}
+
+h2 {
+    @extend %text;
+    font-size: 2.3em;
+}
+
+h3 {
+    @extend %text;
+    font-size: 1.8em;
+}
+
+h4 {
+    @extend %text;
+    font-size: 1.5em;
+}
+
+h5 {
+    @extend %text;
+    font-size: 1.3em;
+}
+
+h6 {
+    @extend %text;
+    font-size: 1.2em;
+}
+
+// Transformations
+// ===========================================================================
+
+.ucase {
+    text-transform: uppercase;
+}

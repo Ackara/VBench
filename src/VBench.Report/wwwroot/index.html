@@ -9,43 +9,67 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/site.min.css" data-inline="true" />
 </head>
 <body>
-    <h1 data-bind="text: selectedDataset"></h1>
+    <main class="column h100">
+        <section class="chart">
+            <header class="p100">
+                <h1><span data-bind="text: selectedDataset"></span> <i class="sf-icon sf-icon-info"></i></h1>
+                <div class="chart-timespan hide">2015 - 2017</div>
+            </header>
 
-    <canvas id="chart" style="height:300px"
-            class="w100 pointer"></canvas>
+            <div class="chart-description p100 horizontal"
+                 data-bind="text: chartEditor.options.description()"></div>
 
-    <div class="tabs row w100"
-         data-bind="foreach: datasetTabs">
-        <button class="tab-btn header"
-                data-bind="text: $data"></button>
-    </div>
+            <canvas id="chart" style="height:300px"
+                    class="w100 pointer"></canvas>
+        </section>
 
-    <table id="chartEditor"
-           data-bind="with: chartEditor">
-        <thead>
-            <tr data-bind="foreach: options.columns">
-                <th class=""
-                    data-bind="text: name, css: { 'is-active': isSelected }"></th>
-            </tr>
-        </thead>
+        <section class="">
+            <div class="row right p100 bg-color">
+                <label>compare with: </label>
+                <select id="compute-menu"
+                        class="drop-down-menu column p50 horizontal accent-color">
+                    <option value="0">previous</option>
+                    <option value="1">min</option>
+                    <option value="2">max</option>
+                </select>
+            </div>
 
-        <tbody data-bind="foreach: options.rows">
-            <tr class="benchmark"
-                data-bind="foreach: values, css: { 'is-active': isSelected }">
-                <td class="cell"
-                    data-bind="css: { 'is-active': isSelected, 'is-numeric': isNumeric }">
-                    <div>
-                        <span class="cell-value" data-bind="text: value"></span>
-                        <span class="cell-value computed" data-bind="text: difference"></span>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+            <div class="tabs row w100"
+                 data-bind="foreach: datasetTabs">
+                <button class="tab-btn header w100"
+                        data-bind="text: $data"></button>
+            </div>
+
+            <table id="chartEditor"
+                   class="w100 alt-bg-color"
+                   data-bind="with: chartEditor">
+                <thead>
+                    <tr data-bind="foreach: options.columns">
+                        <th class="ucase"
+                            data-bind="text: name, visible: !shouldHide(), css: { 'is-active': isSelected }"></th>
+                    </tr>
+                </thead>
+
+                <tbody data-bind="foreach: options.rows">
+                    <tr class="benchmark"
+                        data-bind="foreach: values, css: { 'is-active': isSelected }">
+                        <td class="cell"
+                            data-bind="visible: !shouldHide(), css: { 'is-active': isSelected, 'is-numeric': isNumeric }">
+                            <div>
+                                <span class="cell-value" data-bind="text: value"></span>
+                                <span class="cell-value computed" data-bind="text: difference"></span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
 
     <script id="data" type="application/json">
         [{
         "name": "Glob",
+        "systemInfo": "BenchmarkDotNet=v0.10.14, OS=Windows 10.0.17134 \nIntel Core i7-6700K CPU 4.00GHz (Skylake), 1 CPU, 8 logical and 4 physical cores \n.NET Core SDK=2.1.201 \n\t[Host]     : .NET Core 2.0.7 (CoreCLR 4.6.26328.01, CoreFX 4.6.26403.03), 64bit RyuJIT \n\tDefaultJob : .NET Core 2.0.7 (CoreCLR 4.6.26328.01, CoreFX 4.6.26403.03), 64bit RyuJIT",
         "totalTestRuns": 4,
         "columns": [ { "name": "method" }, { "name": "testNo" }, { "name": "mean" }, { "name": "allocated" }, { "name": "param" } ],
         "rows": [
@@ -63,6 +87,7 @@
 
         {
         "name": "Compiler",
+        "systemInfo": "BenchmarkDotNet=v0.10.14, OS=Windows 10.0.17134 \nIntel Core i7-6700K CPU 4.00GHz (Skylake), 1 CPU, 8 logical and 4 physical cores \n.NET Core SDK=2.1.201 \n\t[Host]     : .NET Core 2.0.7 (CoreCLR 4.6.26328.01, CoreFX 4.6.26403.03), 64bit RyuJIT \n\tDefaultJob : .NET Core 2.0.7 (CoreCLR 4.6.26328.01, CoreFX 4.6.26403.03), 64bit RyuJIT",
         "totalTestRuns": 2,
         "columns": [ { "name": "method" }, { "name": "testNo" }, { "name": "mean" }, { "name": "allocated" }, { "name": "param" } ],
         "rows": [

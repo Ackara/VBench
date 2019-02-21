@@ -8,6 +8,7 @@ namespace VBench {
             this.table = parent;
             this.isSelected = ko.observable(false);
             this.name = ko.observable(model.name || "-");
+            this.shouldHide = ko.observable(false);
         }
 
         public static readonly TypeId: number = 2;
@@ -16,5 +17,6 @@ namespace VBench {
         public readonly table: DataTable;
         public name: KnockoutObservable<string>;
         public isSelected: KnockoutObservable<boolean>;
+        public shouldHide: KnockoutObservable<boolean>;
     }
 }

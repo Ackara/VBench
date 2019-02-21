@@ -17,13 +17,15 @@ namespace VBench {
 
             let dataset = this.fetchDataset(datasetId);
             result.totalTestRuns = dataset.totalTestRuns;
+            result.description(dataset.systemInfo);
             result.id(datasetId);
             result.clear();
 
             let calculatedValues: Array<any> = [];
             let numberOfColumns = dataset.columns.length;
             for (let i = 0; i < numberOfColumns; i++) {
-                result.addColumn(dataset.columns[i]);
+                 let col = result.addColumn(dataset.columns[i]);
+                col.shouldHide(i === ColumnIndex.TestNo);
                 calculatedValues.push(null);
             }
 
@@ -35,7 +37,7 @@ namespace VBench {
 
                 method = record.values[ColumnIndex.Method];
                 initializeCalculatedRow = calculatedValues[ColumnIndex.Method] !== method;
-                calculatedValues = this.resolveCalculatedValue(calculatedValues, record.values, (i > 0 ? dataset.rows[i - 1].values : record.values), initializeCalculatedRow);
+                calculatedValues = this.resolveCalculatedValues(calculatedValues, record.values, (i > 0 ? dataset.rows[i - 1].values : record.values), initializeCalculatedRow);
 
                 if (record.values[ColumnIndex.TestNo] === dataset.totalTestRuns) {
                     result.addRow(record, calculatedValues);
@@ -80,11 +82,35 @@ namespace VBench {
             return null;
         }
 
-        private resolveCalculatedValue(current: Array<any>, next: Array<any>, prev: Array<any>, initialize: boolean): Array<any> {
-            let result = next;
+        private resolveCalculatedValues(current: Array<any>, next: Array<any>, prev: Array<any>, initialize: boolean): Array<any> {
+            let result = current, nextValue;
             switch (Repository.comparisonKind) {
                 default:
                     result = prev;
+                    break;
+
+                case ComparisonMethod.min:
+                    for (let i = 0; i < next.length; i++) {
+                        nextValue = next[i];
+
+                        if (nextValue && (typeof nextValue === "number")) {
+                            if (initialize) { result[i] = nextValue; }
+                            else if (nextValue < result[i]) { result[i] = nextValue; }
+                        }
+                        else { result[i] = nextValue; }
+                    }
+                    break;
+
+                case ComparisonMethod.max:
+                    for (let i = 0; i < next.length; i++) {
+                        nextValue = next[i];
+
+                        if (nextValue && (typeof nextValue === "number")) {
+                            if (initialize) { result[i] = nextValue; }
+                            else if (nextValue > result[i]) { result[i] = nextValue; }
+                        }
+                        else { result[i] = nextValue; }
+                    }
                     break;
             }
 

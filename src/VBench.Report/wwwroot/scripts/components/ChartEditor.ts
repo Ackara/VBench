@@ -21,15 +21,17 @@ namespace VBench {
 
         public options: DataTable;
         private _linesEnabled: boolean;
+        private _selectedDatasetId: string;
 
-        public changeDataset(datasetId: string): void {
-            this._repository.fetchLastestBenchmark(datasetId, this.options);
+        public changeDataset(datasetId: string = null): void {
+            this._selectedDatasetId = (datasetId ? datasetId : this._selectedDatasetId);
+            this._repository.fetchLastestBenchmark(this._selectedDatasetId, this.options);
 
             this._chart.data.labels.splice(0, this._chart.data.labels.length);
             for (let i = 0; i < this.options.totalTestRuns; i++) {
-                this._chart.data.labels.push(`Run-${i + 1}`);
+                this._chart.data.labels.push(`Test-${i + 1}`);
             }
-            
+
             while (this._chart.data.datasets.length > 0) {
                 this._chart.data.datasets.pop();
             }
@@ -85,7 +87,6 @@ namespace VBench {
         }
 
         public recalculateComputedCells(): void {
-            
         }
 
         private createLineChart(): Chart {

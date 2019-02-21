@@ -1,1 +1,17 @@
-﻿
+﻿@import "../modules/_theme.scss";
+
+.accent-color {
+    color: $accent-color-1;
+}
+
+.alt-accent-color {
+    color: $accent-color-2;
+}
+
+.bg-color {
+    background-color: $background-color;
+}
+
+.alt-bg-color {
+    background-color: $alt-background-color;
+}

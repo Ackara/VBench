@@ -43,15 +43,30 @@ namespace VBench {
                 });
             }
 
+            let menu = <HTMLSelectElement>document.getElementById("compute-menu");
+            if (menu) {
+                menu.addEventListener("click", function (e) {
+                    if (Repository.comparisonKind != menu.selectedIndex) {
+                        Repository.comparisonKind = menu.selectedIndex;
+                        me.chartEditor.changeDataset();
+                    }
+                }, { passive: true });
+            }
+
             let tabs = document.getElementsByClassName("tab-btn");
             for (let i = 0; i < tabs.length; i++) {
                 tabs[i].addEventListener("click", function (e) {
+                    for (var t = 0; t < tabs.length; t++) {
+                        tabs[t].classList.remove("is-active");
+                    }
+
                     let context = ko.contextFor(this);
-                    (<HTMLElement>this).classList.toggle("is-active");
+                    (<HTMLElement>this).classList.add("is-active");
                     me.chartEditor.changeDataset(context.$data);
                     me.selectedDataset(context.$data);
                 });
             }
+            tabs[0].classList.add("is-active");
         }
     }
 }

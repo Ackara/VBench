@@ -8,10 +8,12 @@ namespace VBench {
             this.id = ko.observable();
             this.rows = ko.observableArray();
             this.columns = ko.observableArray();
+            this.description = ko.observable("");
         }
 
         public totalTestRuns: number = 0;
         public id: KnockoutObservable<string>;
+        public description: KnockoutObservable<string>;
         public rows: KnockoutObservableArray<DataRow>;
         public columns: KnockoutObservableArray<DataColumn>;
 

@@ -1,19 +1,30 @@
 ﻿@import "../modules/_theme.scss";
 
-tr:hover .cell {
-    & > * {
-        border-top-color: $accent-color-2;
-        border-bottom-color: $accent-color-2;
+thead {
+    tr:last-child {
+        background-color: invert($alt-background-color, 15);
     }
+}
 
+tr:hover .cell {
     &.is-numeric {
         cursor: pointer;
+    }
+
+    & > * {
+        border-top-color: $accent-color-1;
+        border-bottom-color: $accent-color-1;
+    }
+
+    .cell-value {
+        opacity: 1;
     }
 }
 
 $cell-padding: 0.5em;
 
 th, td {
+    text-align: left;
     padding: $cell-padding;
 }
 
@@ -27,19 +38,16 @@ th, td {
         transition: {
             duration: 250ms;
             property: border-color;
+            timing-function: linear;
         }
-    }
-
-    &:hover .cell-value {
-        opacity: 1;
     }
 
     &.is-active {
         background-color: invert($background-color, 5);
 
         & > * {
-            border-left-color: $accent-color-2;
-            border-right-color: $accent-color-2;
+            border-left-color: $accent-color-1;
+            border-right-color: $accent-color-1;
         }
 
         .cell-value {
@@ -52,9 +60,12 @@ th, td {
     transition: {
         duration: 250ms;
         property: opacity;
+        timing-function: ease-in;
     }
 
     &.computed {
         opacity: 0;
+        font-weight: lighter;
+        color: $subtle-text-color;
     }
 }

@@ -1,6 +1,7 @@
 ﻿@import "../modules/_theme.scss";
 
 html, body {
+    height: 100%;
     color: $text-color;
     background-color: $background-color;
 }
@@ -14,6 +15,10 @@ html, body {
 
 .row {
     @extend %container;
+
+    &.right {
+        justify-content: flex-end;
+    }
 }
 
 .column {
@@ -26,6 +31,10 @@ html, body {
 
 .w100 {
     width: 100%;
+}
+
+.h100 {
+    height: 100%;
 }
 
 %padding {
@@ -48,4 +57,23 @@ html, body {
 .p100 {
     @extend %padding;
     padding: 1em;
+}
+
+%margin {
+    &.vertical {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+.m100 {
+    @extend %margin;
+    margin: 1em;
+}
+
+// Responsiveness
+// ===========================================================================
+
+.is-hidden, .hide {
+    display: none !important;
 }
