@@ -1,0 +1,24 @@
+﻿@import "../modules/_theme.scss";
+
+%btn {
+    outline: none;
+    cursor: pointer;
+    color: $text-color;
+    padding: 0.5em 1em;
+}
+
+.tabs {
+}
+
+.tab-btn {
+    @extend %btn;
+    border: 1px solid transparent;
+    background-color: $background-color;
+
+    &:hover {
+    }
+
+    &.is-active {
+        background-color: $alt-background-color;
+    }
+}

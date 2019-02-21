@@ -1,5 +1,16 @@
 ﻿@import "../modules/_theme.scss";
 
+tr:hover .cell {
+    & > * {
+        border-top-color: $accent-color-2;
+        border-bottom-color: $accent-color-2;
+    }
+
+    &.is-numeric {
+        cursor: pointer;
+    }
+}
+
 $cell-padding: 0.5em;
 
 th, td {
@@ -12,32 +23,38 @@ th, td {
     & > * {
         padding: $cell-padding;
         border: 2px solid transparent;
+
+        transition: {
+            duration: 250ms;
+            property: border-color;
+        }
     }
 
-    &.is-numeric:not(:first-child):hover > * {
-        cursor: pointer;
-        border-color: $accent-color-2;
+    &:hover .cell-value {
+        opacity: 1;
     }
 
-    &.is-numeric.is-active:not(:first-child) > * {
-        background-color: $background-color;
-        border-color: lighten($accent-color-2, 10);
+    &.is-active {
+        background-color: invert($background-color, 5);
+
+        & > * {
+            border-left-color: $accent-color-2;
+            border-right-color: $accent-color-2;
+        }
+
+        .cell-value {
+            opacity: 1;
+        }
     }
 }
 
-tbody {
-    tr {
-        transition: {
-            duration: 250ms;
-            property: background-color;
-        }
+.cell-value {
+    transition: {
+        duration: 250ms;
+        property: opacity;
+    }
 
-        &:hover {
-            background-color: $hover-color;
-        }
-
-        &.is-active {
-            background-color: transparentize($accent-color-2, 0.2);
-        }
+    &.computed {
+        opacity: 0;
     }
 }

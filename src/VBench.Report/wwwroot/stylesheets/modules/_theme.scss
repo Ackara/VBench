@@ -1,9 +1,12 @@
-﻿$color-1: #333a5d;
-$color-2: #f08519;
+﻿$color-1: #0B62A4;
+$color-2: #FF9200;
 $color-3: #1e1e1e;
 // ===== Site Colors ===== //
 $background-color: $color-3;
+$alt-background-color: invert($background-color, 10);
+
 $text-color: invert($color-3, 100);
+$subtle-text-color: invert($text-color, 10);
 
 $accent-color-1: $color-1;
 $accent-color-2: $color-2;
