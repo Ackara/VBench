@@ -1,4 +1,5 @@
 ﻿/// <reference path="../../../node_modules/@types/knockout/index.d.ts" />
+/// <reference path="../domain/ComparisonMethod.ts" />
 /// <reference path="../domain/ColumnIndex.ts" />
 /// <reference path="ISelectable.ts" />
 /// <reference path="DataTable.ts" />
@@ -6,15 +7,19 @@
 
 namespace VBench {
     export class DataRow {
-        constructor(parent: DataTable, model: any) {
+        constructor(parent: DataTable, model: any, calculatedValues: Array<any>) {
             let me = this;
             this.table = parent;
+            this.calculatedValues = [];
             this.values = ko.observableArray();
             this.isSelected = ko.observable(false);
+            this.calculatedValues = calculatedValues;
             this.benchmarkId = model.values[ColumnIndex.Method];
 
-            for (let i = 0; i < model.values.length; i++) {
-                this.values.push(new DataCell(this, i, model.values[i]));
+            let value: any;
+            for (let columnIndex = 0; columnIndex < model.values.length; columnIndex++) {
+                value = model.values[columnIndex];
+                this.values.push(new DataCell(this, columnIndex, value));
             }
 
             this.method = ko.pureComputed(function () {
@@ -39,11 +44,13 @@ namespace VBench {
 
         public readonly table: DataTable;
         public readonly benchmarkId: string;
+        public static comparisonKind: ComparisonMethod = ComparisonMethod.previous;
 
         public method: KnockoutObservable<string>;
         public testNumber: KnockoutComputed<number>;
         public isSelected: KnockoutObservable<boolean>;
 
         public values: KnockoutObservableArray<DataCell>;
+        public calculatedValues: Array<any>;
     }
 }

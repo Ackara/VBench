@@ -10,6 +10,7 @@ namespace VBench {
         }
 
         private readonly _data: Array<any>;
+        public static comparisonKind: ComparisonMethod = ComparisonMethod.previous;
 
         public fetchLastestBenchmark(datasetId: string, out: DataTable = null): DataTable {
             let result = (out || new DataTable());
@@ -19,15 +20,25 @@ namespace VBench {
             result.id(datasetId);
             result.clear();
 
-            for (let i = 0; i < dataset.columns.length; i++) {
+            let calculatedValues: Array<any> = [];
+            let numberOfColumns = dataset.columns.length;
+            for (let i = 0; i < numberOfColumns; i++) {
                 result.addColumn(dataset.columns[i]);
+                calculatedValues.push(null);
             }
+
+            let method: string = null;
+            let initializeCalculatedRow: boolean = true;
 
             for (let i = 0; i < dataset.rows.length; i++) {
                 let record: any = dataset.rows[i];
 
+                method = record.values[ColumnIndex.Method];
+                initializeCalculatedRow = calculatedValues[ColumnIndex.Method] !== method;
+                calculatedValues = this.resolveCalculatedValue(calculatedValues, record.values, (i > 0 ? dataset.rows[i - 1].values : record.values), initializeCalculatedRow);
+
                 if (record.values[ColumnIndex.TestNo] === dataset.totalTestRuns) {
-                    result.addRow(record);
+                    result.addRow(record, calculatedValues);
                 }
             }
 
@@ -67,6 +78,17 @@ namespace VBench {
                 }
             }
             return null;
+        }
+
+        private resolveCalculatedValue(current: Array<any>, next: Array<any>, prev: Array<any>, initialize: boolean): Array<any> {
+            let result = next;
+            switch (Repository.comparisonKind) {
+                default:
+                    result = prev;
+                    break;
+            }
+
+            return result;
         }
     }
 }

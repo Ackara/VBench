@@ -14,6 +14,13 @@ namespace VBench {
             this.isNumeric = ko.pureComputed(function () {
                 return typeof me.value() === "number";
             });
+
+            let computedValue = this.row.calculatedValues[columnIndex];
+            if (computedValue && (typeof computedValue === "number")) {
+                computedValue = this.computeDifference(value, computedValue);
+            }
+            else { computedValue = null; }
+            this.difference = ko.observable(computedValue);
         }
 
         public static readonly TypeCode: number = 3;
@@ -23,7 +30,17 @@ namespace VBench {
         public readonly columnIndex: number;
 
         public value: KnockoutObservable<any>;
+        public difference: KnockoutObservable<any>;
+
         public isNumeric: KnockoutComputed<boolean>;
         public isSelected: KnockoutObservable<boolean>;
+
+        public computeDifference(x: number, y: number): string {
+            let sign = (x >= y ? "+" : "-");
+            let value = Math.abs(x - y);
+            let percentile = ((value / x) * 100).toFixed(0);
+
+            return `[${sign} ${value} (${percentile}%)]`;
+        }
     }
 }

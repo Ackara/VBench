@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/site.min.css" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/site.min.css" data-inline="true" />
 </head>
 <body>
     <h1 data-bind="text: selectedDataset"></h1>
@@ -35,7 +35,8 @@
                 <td class="cell"
                     data-bind="css: { 'is-active': isSelected, 'is-numeric': isNumeric }">
                     <div>
-                        <span data-bind="text: value"></span>
+                        <span class="cell-value" data-bind="text: value"></span>
+                        <span class="cell-value computed" data-bind="text: difference"></span>
                     </div>
                 </td>
             </tr>
@@ -55,10 +56,12 @@
 
         { "values": [ "Regex", 1, 15, 5, "A" ] },
         { "values": [ "Regex", 2, 15, 5, "A" ] },
-        { "values": [ "Regex", 3, 15, 5, "A" ] },
+        { "values": [ "Regex", 3, 15, 1, "A" ] },
         { "values": [ "Regex", 4, 15, 5, "A" ] }
         ]
-        }, {
+        },
+
+        {
         "name": "Compiler",
         "totalTestRuns": 2,
         "columns": [ { "name": "method" }, { "name": "testNo" }, { "name": "mean" }, { "name": "allocated" }, { "name": "param" } ],

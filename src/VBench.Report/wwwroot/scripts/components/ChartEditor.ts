@@ -12,10 +12,10 @@ namespace VBench {
             this._linesEnabled = true;
             this.options = new DataTable();
             this._colorPicker = new ColorGenerator();
-            this._lineChart = this.createLineChart();
+            this._chart = this.createLineChart();
         }
 
-        private readonly _lineChart: Chart;
+        private readonly _chart: Chart;
         private readonly _repository: Repository;
         private readonly _colorPicker: ColorGenerator;
 
@@ -25,20 +25,24 @@ namespace VBench {
         public changeDataset(datasetId: string): void {
             this._repository.fetchLastestBenchmark(datasetId, this.options);
 
-            this._lineChart.data.labels.splice(0, this._lineChart.data.labels.length);
+            this._chart.data.labels.splice(0, this._chart.data.labels.length);
             for (let i = 0; i < this.options.totalTestRuns; i++) {
-                this._lineChart.data.labels.push(`Run-${i + 1}`);
+                this._chart.data.labels.push(`Run-${i + 1}`);
+            }
+            
+            while (this._chart.data.datasets.length > 0) {
+                this._chart.data.datasets.pop();
             }
 
-            this._lineChart.update();
+            this._chart.update();
         }
 
-        public updateChart(data: DataCell): void {
-            let benchmarkId: string = data.row.method();
-            let columnIndex: number = data.columnIndex;
-            let seriesId: string = `${benchmarkId} [${data.row.table.columns()[columnIndex].name()}]`;
+        public updateChart(dataCell: DataCell): void {
+            let benchmarkId: string = dataCell.row.method();
+            let columnIndex: number = dataCell.columnIndex;
+            let seriesId: string = `${benchmarkId} [${dataCell.row.table.columns()[columnIndex].name()}]`;
 
-            if (data.isSelected()) {
+            if (dataCell.isSelected()) {
                 console.debug(`${seriesId} |> add-series`);
 
                 let dataPoints = this._repository.fetchDataPoints(this.options.id(), benchmarkId, columnIndex);
@@ -47,7 +51,7 @@ namespace VBench {
                     let series = this.createSeriesBaseSettings();
                     series.data = dataPoints;
                     series.label = seriesId;
-                    this._lineChart.data.datasets.push(series);
+                    this._chart.data.datasets.push(series);
                 }
                 else {
                     console.debug("toast an error");
@@ -56,7 +60,7 @@ namespace VBench {
             else {
                 console.debug(`${seriesId} |> remove-series`);
 
-                let series = this._lineChart.data.datasets;
+                let series = this._chart.data.datasets;
                 for (let i = 0; i < series.length; i++) {
                     if (series[i].label === seriesId) {
                         series.splice(i, 1);
@@ -64,20 +68,24 @@ namespace VBench {
                     }
                 }
             }
-            this._lineChart.update();
+            this._chart.update();
         }
 
         public toggleChartLines(): void {
             this._linesEnabled = !this._linesEnabled;
             let config = this.createSeriesBaseSettings();
 
-            this._lineChart.data.datasets.forEach((dataset) => {
+            this._chart.data.datasets.forEach((dataset) => {
                 dataset.showLine = this._linesEnabled;
                 dataset.pointStyle = config.pointStyle;
                 dataset.pointRadius = config.pointRadius;
                 dataset.pointBorderWidth = config.pointBorderWidth;
             });
-            this._lineChart.update();
+            this._chart.update();
+        }
+
+        public recalculateComputedCells(): void {
+            
         }
 
         private createLineChart(): Chart {

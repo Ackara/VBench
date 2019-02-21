@@ -21,8 +21,8 @@ namespace VBench {
             return newColumn;
         }
 
-        public addRow(model: any): DataRow {
-            let newRow = new DataRow(this, model);
+        public addRow(model: any, calculatedValues: Array<any>): DataRow {
+            let newRow = new DataRow(this, model, calculatedValues);
             this.rows.push(newRow);
             return newRow;
         }
