@@ -73,21 +73,30 @@ namespace Acklann.VBench
             {
                 using (var repo = new Repository(Repository.Discover(cwd)))
                 {
-
                     Commit lastCommit = repo.Commits.FirstOrDefault();
                     if (lastCommit == null) return null;
                     else
                     {
-                        var info = new CommitInfo();
-                        info.Date = lastCommit.Committer.When.Date;
-                        info.Author = lastCommit.Committer.Name;
-                        info.Email = lastCommit.Committer.Email;
-                        info.Message = lastCommit.Message;
-                        info.Sha = lastCommit.Sha;
+                        var newAndModifiedFiles = repo.RetrieveStatus()
+                            .Where(x =>
+                                x.State.HasFlag(FileStatus.NewInIndex) || x.State.HasFlag(FileStatus.NewInWorkdir) ||
+                                x.State.HasFlag(FileStatus.ModifiedInIndex) || x.State.HasFlag(FileStatus.ModifiedInWorkdir) ||
+                                x.State.HasFlag(FileStatus.RenamedInIndex) || x.State.HasFlag(FileStatus.RenamedInWorkdir));
 
-                        var uncommitedFiles = repo.RetrieveStatus();
-                        info.IsClean = (uncommitedFiles.Count() == 0);
-                        return info;
+                        foreach (var item in newAndModifiedFiles)
+                        {
+                            Console.WriteLine($"> > >  [{item.State}] {Path.GetFileName(item.FilePath)}");
+                        }
+
+                        return new CommitInfo
+                        {
+                            IsClean = (newAndModifiedFiles.Count() == 0),
+                            Date = lastCommit.Committer.When.Date,
+                            Author = lastCommit.Committer.Name,
+                            Email = lastCommit.Committer.Email,
+                            Message = lastCommit.Message,
+                            Sha = lastCommit.Sha
+                        };
                     }
                 }
             }
