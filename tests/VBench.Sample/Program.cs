@@ -1,13 +1,17 @@
-﻿using BenchmarkDotNet.Running;
-using System;
+﻿using Acklann.VBench;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Jobs;
+using BenchmarkDotNet.Running;
 
 namespace VBench.Sample
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            var summary = BenchmarkRunner.Run<RandomTest>();
+            BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args, DefaultConfig.Instance
+                .With(new VisualExporter())
+                .With(Job.Dry.AsDefault()));
         }
     }
 }
