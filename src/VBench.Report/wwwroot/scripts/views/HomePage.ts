@@ -39,7 +39,9 @@ namespace VBench {
             let btn = document.getElementById("chart-lines-btn");
             if (btn) {
                 btn.addEventListener("click", function (e) {
-                    me.chartEditor.toggleChartLines();
+                    let on = me.chartEditor.toggleChartLines();
+                    let value = btn.getElementsByClassName("chart-lines-btn-value")[0];
+                    value.innerHTML = (on ? "on" : "off");
                 });
             }
 
@@ -67,6 +69,15 @@ namespace VBench {
                 });
             }
             tabs[0].classList.add("is-active");
+
+            let infoBtn = document.getElementById("info-btn");
+            if (infoBtn) {
+                infoBtn.addEventListener("click", function (e) {
+                    infoBtn.classList.toggle("is-active");
+                    let info = document.getElementById("system-info");
+                    if (info) { info.classList.toggle("is-active"); }
+                });
+            }
         }
     }
 }

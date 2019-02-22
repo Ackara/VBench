@@ -4,7 +4,19 @@
     outline: none;
     cursor: pointer;
     color: $text-color;
-    padding: 0.5em 1em;
+    background-color: transparent;
+
+    i {
+        font-size: 100%;
+
+        &:before {
+            vertical-align: middle;
+        }
+    }
+}
+
+button, .btn {
+    @extend %btn;
 }
 
 .tabs {
@@ -29,7 +41,7 @@
 
     &.is-active {
         opacity: 1;
-        border-bottom-color: $text-color;
+        border-bottom-color: $accent-color-1;
         background-color: $alt-background-color;
     }
 }

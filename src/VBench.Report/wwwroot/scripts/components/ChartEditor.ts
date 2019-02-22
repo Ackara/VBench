@@ -73,7 +73,7 @@ namespace VBench {
             this._chart.update();
         }
 
-        public toggleChartLines(): void {
+        public toggleChartLines(): boolean {
             this._linesEnabled = !this._linesEnabled;
             let config = this.createSeriesBaseSettings();
 
@@ -84,9 +84,7 @@ namespace VBench {
                 dataset.pointBorderWidth = config.pointBorderWidth;
             });
             this._chart.update();
-        }
-
-        public recalculateComputedCells(): void {
+            return this._linesEnabled;
         }
 
         private createLineChart(): Chart {
@@ -123,12 +121,13 @@ namespace VBench {
             let color = this._colorPicker.newColor();
 
             let config: Chart.ChartDataSets = {
-                steppedLine: "after",
+                fill: false,
                 pointHitRadius: 20,
                 showLine: this._linesEnabled,
+                backgroundColor: color.getValue(),
                 borderColor: [color.getValue(0.75)],
-                pointRadius: (this._linesEnabled ? 5 : 20),
-                pointBorderWidth: (this._linesEnabled ? 15 : 6),
+                pointRadius: (this._linesEnabled ? 3 : 20),
+                pointBorderWidth: (this._linesEnabled ? 6 : 6),
                 pointStyle: (this._linesEnabled ? "circle" : "line"),
             };
 

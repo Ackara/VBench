@@ -1,0 +1,44 @@
+﻿@import "../modules/_theme.scss";
+@import "../modules/_mixins.scss";
+
+.switch {
+    position: relative;
+    display: inline-block;
+    height: 1em;
+    width: 2.5em;
+
+    input {
+        opacity: 0;
+        height: 0;
+        width: 0;
+    }
+
+    .slider {
+        background-color: $alt-background-color;
+        position: absolute;
+        cursor: pointer;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        top: 0;
+
+        &:before {
+            @include depth25($subtle-text-color);
+            background-color: $subtle-text-color;
+            position: absolute;
+            height: 100%;
+            width: 50%;
+            content: "";
+
+            transition: {
+                duration: 250ms;
+                property: transform, background-color;
+            }
+        }
+    }
+}
+
+input:checked + .slider:before {
+    transform: translateX(1.25em);
+    background-color: $accent-color-1;
+}

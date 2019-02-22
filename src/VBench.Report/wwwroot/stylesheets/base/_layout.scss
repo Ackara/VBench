@@ -19,11 +19,19 @@ html, body {
     &.right {
         justify-content: flex-end;
     }
+
+    &.baseline {
+        align-items: baseline;
+    }
 }
 
 .column {
     @extend %container;
     flex-direction: column;
+}
+
+.grow {
+    flex-grow: 1;
 }
 
 // Sizing & Spacing
@@ -41,6 +49,11 @@ html, body {
     &.horizontal {
         padding-top: 0;
         padding-bottom: 0;
+    }
+
+    &.vertical {
+        padding-left: 0;
+        padding-right: 0;
     }
 }
 
@@ -64,6 +77,21 @@ html, body {
         margin-left: 0;
         margin-right: 0;
     }
+
+    &.horizontal {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
+.m25 {
+    @extend %margin;
+    margin: 0.25em;
+}
+
+.m50 {
+    @extend %margin;
+    margin: 0.5em;
 }
 
 .m100 {

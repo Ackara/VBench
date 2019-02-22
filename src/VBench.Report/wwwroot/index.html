@@ -12,31 +12,41 @@
     <main class="column h100">
         <section class="chart">
             <header class="p100">
-                <h1><span data-bind="text: selectedDataset"></span> <i class="sf-icon sf-icon-info"></i></h1>
+                <h1><span data-bind="text: selectedDataset"></span></h1>
                 <div class="chart-timespan hide">2015 - 2017</div>
             </header>
 
-            <div class="chart-description p100 horizontal"
-                 data-bind="text: chartEditor.options.description()"></div>
+            <div id="system-info" class="p100" data-bind="text: chartEditor.options.description()"></div>
 
             <canvas id="chart" style="height:300px"
-                    class="w100 pointer"></canvas>
+                    class="w100"></canvas>
         </section>
 
-        <section class="">
-            <div class="row right p100 bg-color">
-                <label>compare with: </label>
-                <select id="compute-menu"
-                        class="drop-down-menu column p50 horizontal accent-color">
-                    <option value="0">previous</option>
-                    <option value="1">min</option>
-                    <option value="2">max</option>
-                </select>
+        <section>
+            <div class="command-bar row p100 bg-color">
+                <div class="row baseline">
+                    <label>compare with: </label>
+                    <select id="compute-menu"
+                            class="drop-down-menu column accent-color">
+                        <option value="0">previous</option>
+                        <option value="1">min</option>
+                        <option value="2">max</option>
+                    </select>
+                </div>
+
+                <button id="chart-lines-btn">
+                    <span>curves: </span>
+                    <span class="chart-lines-btn-value accent-color">on</span>
+                </button>
+
+                <div class="grow row">
+                    <button id="info-btn" class="btn"><i class="sf-icon sf-icon-info"></i></button>
+                </div>
             </div>
 
             <div class="tabs row w100"
                  data-bind="foreach: datasetTabs">
-                <button class="tab-btn header w100"
+                <button class="tab-btn header w100 p50"
                         data-bind="text: $data"></button>
             </div>
 
