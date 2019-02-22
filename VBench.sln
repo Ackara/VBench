@@ -15,7 +15,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".misc", ".misc", "{5B98F190
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VBench.Report", "src\VBench.Report\VBench.Report.csproj", "{4F20B493-4A7D-4C58-9A3D-F608694BB006}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VBench", "src\VBench\VBench.csproj", "{16D1FFA0-00DF-4DC5-91BB-CB690607A56F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VBench", "src\VBench\VBench.csproj", "{16D1FFA0-00DF-4DC5-91BB-CB690607A56F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VBench.Sample", "tests\VBench.Sample\VBench.Sample.csproj", "{40A2AA10-4995-43A8-B58A-C8AE1738CEA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,10 @@ Global
 		{16D1FFA0-00DF-4DC5-91BB-CB690607A56F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16D1FFA0-00DF-4DC5-91BB-CB690607A56F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16D1FFA0-00DF-4DC5-91BB-CB690607A56F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40A2AA10-4995-43A8-B58A-C8AE1738CEA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40A2AA10-4995-43A8-B58A-C8AE1738CEA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40A2AA10-4995-43A8-B58A-C8AE1738CEA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40A2AA10-4995-43A8-B58A-C8AE1738CEA1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
