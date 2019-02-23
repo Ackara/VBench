@@ -19,6 +19,8 @@ namespace Acklann.VBench
             _dbname = $"{nameof(VBench)}.litedb".ToLowerInvariant();
         }
 
+        internal const int TOTAL_INTERNAL_VALUES = 7;
+
         public string Name { get; }
 
         public void ExportToLog(Summary summary, ILogger logger)
@@ -28,30 +30,33 @@ namespace Acklann.VBench
         public IEnumerable<string> ExportToFiles(Summary summary, ILogger consoleLogger)
         {
             string databaseFilePath = Path.Combine(summary.ResultsDirectoryPath, _dbname);
-            UpdateDatabase(summary, databaseFilePath);
+            CuratedDataset lastestBenchmark = UpdateDatabase(summary, databaseFilePath);
+            IEnumerable<CuratedDataset> mergedData = ExportDatabase(databaseFilePath);
+            // next: I have to inject data into html report
 
             return new string[] { databaseFilePath };
         }
 
-        internal static void UpdateDatabase(Summary summary, string databaseFilePath)
+        internal static CuratedDataset UpdateDatabase(Summary summary, string databaseFilePath)
         {
             if (summary == null) throw new ArgumentNullException(nameof(summary));
             if (string.IsNullOrEmpty(databaseFilePath)) throw new ArgumentNullException(nameof(databaseFilePath));
 
             using (var db = new LiteDatabase(databaseFilePath))
             {
-                var store = db.GetCollection<BenchmarkResult>(ResolveCollectionName(summary));
+                var store = db.GetCollection<CuratedDataset>(ResolveCollectionName(summary));
 
-                var result = new BenchmarkResult();
+                var result = new CuratedDataset();
                 result.Name = store.Name;
                 result.Date = DateTime.UtcNow;
                 result.HostInformation = string.Join(Environment.NewLine, summary.HostEnvironmentInfo.ToFormattedString());
 
-                var columns = new List<BenchmarkResultColumn>();
-                foreach (var column in summary.Table.Columns)
+                var columns = new List<CuratedDatasetColumn>();
+                foreach (var column in summary.Table.Columns.Where(x => x.NeedToShow))
                 {
-                    columns.Add(new BenchmarkResultColumn
+                    columns.Add(new CuratedDatasetColumn
                     {
+                        Index = column.Index,
                         Name = column.OriginalColumn.ColumnName,
                         UnitKind = column.OriginalColumn.UnitType,
                         IsNumeric = column.OriginalColumn.IsNumeric
@@ -62,7 +67,70 @@ namespace Acklann.VBench
                 result.CommitInformation = GetRepositoryInfo(summary.ResultsDirectoryPath);
 
                 store.Insert(result);
+                return result;
             }
+        }
+
+        internal static IEnumerable<CuratedDataset> ExportDatabase(string databaseFilePath)
+        {
+            if (string.IsNullOrEmpty(databaseFilePath)) throw new ArgumentNullException(nameof(databaseFilePath));
+
+            using (var db = new LiteDatabase(databaseFilePath))
+            {
+                foreach (string collectionName in db.GetCollectionNames())
+                {
+                    var store = db.GetCollection<CuratedDataset>(collectionName);
+                    var item = MergeCollection(store);
+                    if (item?.Rows?.Length > 0) yield return item;
+                }
+            }
+        }
+
+        internal static CuratedDataset MergeCollection(LiteCollection<CuratedDataset> store)
+        {
+            if (store == null) throw new ArgumentNullException(nameof(store));
+
+            object[] storedValues, curatedValues;
+            var curatedRows = new Stack<object[]>();
+            CuratedDatasetColumn[] lastestColumns = null;
+            var result = new CuratedDataset { Name = store.Name };
+            int index; bool firstItem = true;
+
+            foreach (CuratedDataset storedData in store.FindAll().OrderByDescending(x => x.TestNo))
+            {
+                if (firstItem) // The 1st item is the latest benchmark
+                {
+                    result.TestNo = storedData.TestNo;
+                    result.HostInformation = storedData.HostInformation;
+                    lastestColumns = storedData.Columns;
+                }
+
+                for (int rowIndex = 0; rowIndex < storedData.Rows.Length; rowIndex++)
+                {
+                    index = 0;
+                    storedValues = storedData.Rows[rowIndex];
+                    var internalValues = new object[TOTAL_INTERNAL_VALUES] {
+                        storedData.TestNo, storedData.Date, storedData.HostInformation,
+                        storedData.CommitInformation.Author, storedData.CommitInformation.Email, storedData.CommitInformation.Sha, storedData.CommitInformation.WasClean
+                    };
+                    curatedValues = new object[internalValues.Length + lastestColumns.Length];
+
+                    foreach (object value in internalValues)
+                        curatedValues[index++] = value;
+
+                    foreach (var column in lastestColumns)
+                    {
+                        if (column.IsNumeric)
+                            curatedValues[index++] = Convert.ToInt32(storedValues[column.Index]);
+                        else
+                            curatedValues[index++] = storedValues[column.Index];
+                    }
+                }
+
+                firstItem = false;
+            }
+            result.Rows = curatedRows.ToArray();
+            return result;
         }
 
         internal static CommitInfo GetRepositoryInfo(string cwd)
@@ -83,14 +151,9 @@ namespace Acklann.VBench
                                 x.State.HasFlag(FileStatus.ModifiedInIndex) || x.State.HasFlag(FileStatus.ModifiedInWorkdir) ||
                                 x.State.HasFlag(FileStatus.RenamedInIndex) || x.State.HasFlag(FileStatus.RenamedInWorkdir));
 
-                        foreach (var item in newAndModifiedFiles)
-                        {
-                            Console.WriteLine($"> > >  [{item.State}] {Path.GetFileName(item.FilePath)}");
-                        }
-
                         return new CommitInfo
                         {
-                            IsClean = (newAndModifiedFiles.Count() == 0),
+                            WasClean = (newAndModifiedFiles.Count() == 0),
                             Date = lastCommit.Committer.When.Date,
                             Author = lastCommit.Committer.Name,
                             Email = lastCommit.Committer.Email,
@@ -101,23 +164,6 @@ namespace Acklann.VBench
                 }
             }
             catch (Exception ex) { Console.WriteLine($"Could not obtain Git information. {ex.Message}"); }
-
-            return null;
-        }
-
-        internal static string ResolveGitDirectory(string cwd)
-        {
-            if (string.IsNullOrEmpty(cwd)) throw new ArgumentNullException(nameof(cwd));
-
-            /// Walking up the current directory to see if I find a '.git' folder.
-            while (!string.IsNullOrEmpty(cwd))
-            {
-                if (Directory.Exists(Path.Combine(cwd, ".git"))) return cwd;
-                // If I find a visual studio '.sln' file, and yet I still have not find a .git repo, I will assume the project is not not using git.
-                else if (Directory.EnumerateFiles(cwd, "*.sln", SearchOption.TopDirectoryOnly).Count() > 0) break;
-
-                cwd = Path.GetDirectoryName(cwd);
-            }
 
             return null;
         }

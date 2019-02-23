@@ -6,7 +6,7 @@ namespace Acklann.VBench
     {
         public DateTime Date { get; internal set; }
 
-        public bool IsClean { get; internal set; }
+        public bool WasClean { get; internal set; }
 
         public string Branch { get; internal set; }
 

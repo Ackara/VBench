@@ -3,15 +3,12 @@ using System;
 
 namespace Acklann.VBench
 {
-    public class BenchmarkResult
+    public class CuratedDataset
     {
         [BsonId(autoId: true)]
-        public int Id { get; set; }
+        public int TestNo { get; set; }
 
         public string Name { get; set; }
-
-        [BsonIgnore]
-        public int TestNo { get; set; }
 
         public string HostInformation { get; set; }
 
@@ -19,8 +16,8 @@ namespace Acklann.VBench
 
         public CommitInfo CommitInformation { get; internal set; }
 
-        public BenchmarkResultColumn[] Columns { get; set; }
+        public CuratedDatasetColumn[] Columns { get; set; }
 
-        public string[][] Rows { get; set; }
+        public object[][] Rows { get; set; }
     }
 }

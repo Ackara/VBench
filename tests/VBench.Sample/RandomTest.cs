@@ -1,10 +1,9 @@
-﻿using Acklann.VBench;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Configs;
+﻿using BenchmarkDotNet.Attributes;
 using System.Threading;
 
 namespace VBench.Sample
 {
+    [RankColumn]
     public class RandomTest
     {
         [Benchmark(Baseline = true)]
