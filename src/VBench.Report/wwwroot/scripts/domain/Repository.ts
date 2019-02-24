@@ -16,7 +16,7 @@ namespace VBench {
             let result = (out || new DataTable());
 
             let dataset = this.fetchDataset(datasetId);
-            result.totalTestRuns = dataset.totalTestRuns;
+            result.totalTestRuns = dataset.testNo;
             result.description(dataset.systemInfo);
             result.id(datasetId);
             result.clear();
@@ -25,7 +25,7 @@ namespace VBench {
             let numberOfColumns = dataset.columns.length;
             for (let i = 0; i < numberOfColumns; i++) {
                  let col = result.addColumn(dataset.columns[i]);
-                col.shouldHide(i === ColumnIndex.TestNo);
+                col.shouldHide(i < ColumnIndex.Method);
                 calculatedValues.push(null);
             }
 
@@ -34,12 +34,12 @@ namespace VBench {
 
             for (let i = 0; i < dataset.rows.length; i++) {
                 let record: any = dataset.rows[i];
-
-                method = record.values[ColumnIndex.Method];
+                
+                method = record[ColumnIndex.Method];
                 initializeCalculatedRow = calculatedValues[ColumnIndex.Method] !== method;
-                calculatedValues = this.resolveCalculatedValues(calculatedValues, record.values, (i > 0 ? dataset.rows[i - 1].values : record.values), initializeCalculatedRow);
-
-                if (record.values[ColumnIndex.TestNo] === dataset.totalTestRuns) {
+                calculatedValues = this.resolveCalculatedValues(calculatedValues, record, (i > 0 ? dataset.rows[i - 1] : record), initializeCalculatedRow);
+                
+                if (record[ColumnIndex.TestNo] === dataset.testNo) {
                     result.addRow(record, calculatedValues);
                 }
             }

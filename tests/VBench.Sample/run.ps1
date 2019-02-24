@@ -10,7 +10,7 @@ try
 	[string]$app = Join-Path $PSScriptRoot "bin/Release/*/*Sample.dll" | Resolve-Path;
 	Split-Path $app -Parent | Push-Location;
 	&dotnet $app --filter $Filter;
-
-	Join-Path $PWD "BenchmarkDotNet.Artifacts/results/*.vbench.html" | Resolve-Path;
+	
+	#Join-Path $PWD "BenchmarkDotNet.Artifacts/results/*.vbench.html" | Resolve-Path;
 }
 finally { Pop-Location; }

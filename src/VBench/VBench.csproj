@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -7,10 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Acklann.Traneleon" Version="1.2.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="BenchmarkDotNet" Version="0.11.4" />
     <PackageReference Include="HtmlAgilityPack" Version="1.9.0" />
     <PackageReference Include="LibGit2Sharp" Version="0.26.0" />
     <PackageReference Include="LiteDB" Version="4.1.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="reports/*.html" />
+  </ItemGroup>
+
+  <Target Name="CompileHtmlReports" BeforeTargets="PreBuildEvent">
+    <Exec StandardOutputImportance="low" Command="powershell -ExecutionPolicy Bypass -NoProfile -NonInteractive -File pack.ps1" />
+  </Target>
 </Project>

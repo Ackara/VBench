@@ -1,13 +1,18 @@
-﻿using BenchmarkDotNet.Exporters;
+﻿using BenchmarkDotNet.Columns;
+using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Helpers;
+using BenchmarkDotNet.Horology;
 using BenchmarkDotNet.Loggers;
 using BenchmarkDotNet.Reports;
 using LibGit2Sharp;
 using LiteDB;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace Acklann.VBench
 {
@@ -16,7 +21,7 @@ namespace Acklann.VBench
         public VisualExporter()
         {
             Name = $"{nameof(VBench)}";
-            _dbname = $"{nameof(VBench)}.litedb".ToLowerInvariant();
+            _name = $"{nameof(VBench).ToLowerInvariant()}";
         }
 
         internal const int TOTAL_INTERNAL_VALUES = 7;
@@ -29,12 +34,25 @@ namespace Acklann.VBench
 
         public IEnumerable<string> ExportToFiles(Summary summary, ILogger consoleLogger)
         {
-            string databaseFilePath = Path.Combine(summary.ResultsDirectoryPath, _dbname);
+            string databaseFilePath = Path.Combine(summary.ResultsDirectoryPath, $"{_name}.litedb");
             CuratedDataset lastestBenchmark = UpdateDatabase(summary, databaseFilePath);
             IEnumerable<CuratedDataset> mergedData = ExportDatabase(databaseFilePath);
-            // next: I have to inject data into html report
 
-            return new string[] { databaseFilePath };
+            Assembly assembly = typeof(VisualExporter).Assembly;
+            string reportFilePath = Path.Combine(summary.ResultsDirectoryPath, $"{_name}.html");
+            using (Stream output = new FileStream(reportFilePath, System.IO.FileMode.Create, FileAccess.Write, FileShare.Read))
+            using (Stream source = assembly.GetManifestResourceStream(assembly.GetManifestResourceNames().First(x => x.EndsWith(".html"))))
+            {
+                var html = new HtmlAgilityPack.HtmlDocument();
+                html.Load(source);
+
+                var script = html.GetElementbyId("data");
+                script.RemoveAllChildren();
+                script.AppendChild(html.CreateTextNode(JsonConvert.SerializeObject(mergedData, Formatting.Indented, _jsonSettings)));
+                html.Save(output);
+            }
+
+            return new string[] { databaseFilePath, reportFilePath };
         }
 
         internal static CuratedDataset UpdateDatabase(Summary summary, string databaseFilePath)
@@ -81,7 +99,7 @@ namespace Acklann.VBench
                 {
                     var store = db.GetCollection<CuratedDataset>(collectionName);
                     var item = MergeCollection(store);
-                    if (item?.Rows?.Length > 0) yield return item;
+                    if (item?.Rows.Length > 0) yield return item;
                 }
             }
         }
@@ -93,25 +111,34 @@ namespace Acklann.VBench
             object[] storedValues, curatedValues;
             var curatedRows = new Stack<object[]>();
             CuratedDatasetColumn[] lastestColumns = null;
+            var curatedColumns = new Stack<CuratedDatasetColumn>();
             var result = new CuratedDataset { Name = store.Name };
             int index; bool firstItem = true;
 
-            foreach (CuratedDataset storedData in store.FindAll().OrderByDescending(x => x.TestNo))
+            foreach (CuratedDataset storedDataset in store.FindAll().OrderByDescending(x => x.TestNo))
             {
                 if (firstItem) // The 1st item is the latest benchmark
                 {
-                    result.TestNo = storedData.TestNo;
-                    result.HostInformation = storedData.HostInformation;
-                    lastestColumns = storedData.Columns;
-                }
+                    result.TestNo = storedDataset.TestNo;
+                    result.HostInformation = storedDataset.HostInformation;
+                    lastestColumns = storedDataset.Columns;
 
-                for (int rowIndex = 0; rowIndex < storedData.Rows.Length; rowIndex++)
+                    index = 0;
+                    result.Columns = new CuratedDatasetColumn[(TOTAL_INTERNAL_VALUES + lastestColumns.Length)];
+                    foreach (var column in Enumerable.Concat(CuratedDatasetColumn.GetInternalColumns(), lastestColumns))
+                    {
+                        result.Columns[index] = column.Clone();
+                        result.Columns[index].Index = index++;
+                    }
+                }
+                
+                for (int rowIndex = 0; rowIndex < storedDataset.Rows.Length; rowIndex++)
                 {
                     index = 0;
-                    storedValues = storedData.Rows[rowIndex];
+                    storedValues = storedDataset.Rows[rowIndex];
                     var internalValues = new object[TOTAL_INTERNAL_VALUES] {
-                        storedData.TestNo, storedData.Date, storedData.HostInformation,
-                        storedData.CommitInformation.Author, storedData.CommitInformation.Email, storedData.CommitInformation.Sha, storedData.CommitInformation.WasClean
+                        storedDataset.TestNo, storedDataset.Date, storedDataset.HostInformation,
+                        storedDataset.CommitInformation.Author, storedDataset.CommitInformation.Email, storedDataset.CommitInformation.Sha, storedDataset.CommitInformation.WasClean
                     };
                     curatedValues = new object[internalValues.Length + lastestColumns.Length];
 
@@ -119,12 +146,21 @@ namespace Acklann.VBench
                         curatedValues[index++] = value;
 
                     foreach (var column in lastestColumns)
-                    {
-                        if (column.IsNumeric)
-                            curatedValues[index++] = Convert.ToInt32(storedValues[column.Index]);
-                        else
-                            curatedValues[index++] = storedValues[column.Index];
-                    }
+                        switch (column.UnitKind)
+                        {
+                            default:
+                                curatedValues[index++] = storedValues[column.Index];
+                                break;
+
+                            case UnitType.Time:
+                                curatedValues[index++] = TryConvertTime(storedValues[column.Index], TimeUnit.Nanosecond);
+                                break;
+
+                            case UnitType.Size:
+                                curatedValues[index++] = TryConvertSize(storedValues[column.Index], SizeUnit.B);
+                                break;
+                        }
+                    curatedRows.Push(curatedValues);
                 }
 
                 firstItem = false;
@@ -163,7 +199,7 @@ namespace Acklann.VBench
                     }
                 }
             }
-            catch (Exception ex) { Console.WriteLine($"Could not obtain Git information. {ex.Message}"); }
+            catch (Exception ex) { Console.WriteLine($"  Could not obtain Git information. {ex.Message}"); }
 
             return null;
         }
@@ -179,7 +215,44 @@ namespace Acklann.VBench
 
         #region Private Members
 
-        private readonly string _dbname;
+        private static readonly Regex _unitPattern = new Regex(@"(?<value>\d+(\.\d+)?) *(?<unit>[a-z]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly IDictionary<MultiEncodingString, TimeUnit> _unitsOfTime = TimeUnit.All.ToDictionary(x => x.Name);
+        private static readonly IDictionary<string, SizeUnit> _unitsOfSize = SizeUnit.All.ToDictionary(x => x.Name);
+
+        private static readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings()
+        {
+            ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
+        };
+
+        private readonly string _name;
+
+        private static object TryConvertTime(object value, TimeUnit unit)
+        {
+            if (value == null) return value;
+
+            Match match = _unitPattern.Match(value.ToString());
+            if (match.Success)
+            {
+                TimeUnit oringinal = _unitsOfTime[match.Groups["unit"].Value];
+                return TimeUnit.Convert(Convert.ToDouble(match.Groups["value"].Value), oringinal, unit);
+            }
+
+            return value;
+        }
+
+        private static object TryConvertSize(object value, SizeUnit unit)
+        {
+            if (value == null) return value;
+
+            Match match = _unitPattern.Match(value.ToString());
+            if (match.Success)
+            {
+                SizeUnit oringinal = _unitsOfSize[match.Groups["unit"].Value];
+                return SizeUnit.Convert(Convert.ToInt64(match.Groups["value"].Value), oringinal, unit);
+            }
+
+            return value;
+        }
 
         #endregion Private Members
     }

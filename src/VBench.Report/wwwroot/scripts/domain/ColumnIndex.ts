@@ -1,7 +1,6 @@
 ﻿namespace VBench {
     export const enum ColumnIndex {
-        Method = 0,
-        TestNo = 1,
-        Mean = 2
+        TestNo = 0,
+        Method = 7
     }
 }

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/site.min.css" data-inline="true" />
+    <link data-inline="true" rel="stylesheet" type="text/css" href="stylesheets/site.min.css" />
 </head>
 <body>
     <main class="column h100">
@@ -64,7 +64,7 @@
                     <tr class="benchmark"
                         data-bind="foreach: values, css: { 'is-active': isSelected }">
                         <td class="cell"
-                            data-bind="visible: !shouldHide(), css: { 'is-active': isSelected, 'is-numeric': isNumeric }">
+                            data-bind="visible: !isHidden(), css: { 'is-active': isSelected, 'is-numeric': isNumeric }">
                             <div>
                                 <span class="cell-value" data-bind="text: value"></span>
                                 <span class="cell-value computed" data-bind="text: difference"></span>
@@ -77,40 +77,138 @@
     </main>
 
     <script id="data" type="application/json">
-        [{
-        "name": "Glob",
-        "systemInfo": "BenchmarkDotNet=v0.10.14, OS=Windows 10.0.17134 \nIntel Core i7-6700K CPU 4.00GHz (Skylake), 1 CPU, 8 logical and 4 physical cores \n.NET Core SDK=2.1.201 \n\t[Host]     : .NET Core 2.0.7 (CoreCLR 4.6.26328.01, CoreFX 4.6.26403.03), 64bit RyuJIT \n\tDefaultJob : .NET Core 2.0.7 (CoreCLR 4.6.26328.01, CoreFX 4.6.26403.03), 64bit RyuJIT",
-        "totalTestRuns": 4,
-        "columns": [ { "name": "method" }, { "name": "testNo" }, { "name": "mean" }, { "name": "allocated" }, { "name": "param" } ],
-        "rows": [
-        { "values": [ "GlobN", 1, 1, 2, "A" ] },
-        { "values": [ "GlobN", 2, 2, 10, "A" ] },
-        { "values": [ "GlobN", 3, 3, 5, "A" ] },
-        { "values": [ "GlobN", 4, 8, 16, "A" ] },
-
-        { "values": [ "Regex", 1, 15, 5, "A" ] },
-        { "values": [ "Regex", 2, 15, 5, "A" ] },
-        { "values": [ "Regex", 3, 15, 1, "A" ] },
-        { "values": [ "Regex", 4, 15, 5, "A" ] }
-        ]
-        },
-
+        [
         {
-        "name": "Compiler",
-        "systemInfo": "BenchmarkDotNet=v0.10.14, OS=Windows 10.0.17134 \nIntel Core i7-6700K CPU 4.00GHz (Skylake), 1 CPU, 8 logical and 4 physical cores \n.NET Core SDK=2.1.201 \n\t[Host]     : .NET Core 2.0.7 (CoreCLR 4.6.26328.01, CoreFX 4.6.26403.03), 64bit RyuJIT \n\tDefaultJob : .NET Core 2.0.7 (CoreCLR 4.6.26328.01, CoreFX 4.6.26403.03), 64bit RyuJIT",
-        "totalTestRuns": 2,
-        "columns": [ { "name": "method" }, { "name": "testNo" }, { "name": "mean" }, { "name": "allocated" }, { "name": "param" } ],
+        "testNo": 10,
+        "name": "VBench_Sample_RandomTest",
+        "hostInformation": "BenchmarkDotNet=v0.11.4, OS=Windows 10.0.17134.590 (1803/April2018Update/Redstone4)\r\nIntel Core i7-6700K CPU 4.00GHz (Skylake), 1 CPU, 8 logical and 4 physical cores\r\n.NET Core SDK=2.1.504",
+        "date": "0001-01-01T00:00:00",
+        "commitInformation": null,
+        "columns": [
+        {
+        "index": 0,
+        "name": "TestNo",
+        "isNumeric": true,
+        "unitKind": 0
+        },
+        {
+        "index": 1,
+        "name": "Date",
+        "isNumeric": false,
+        "unitKind": 0
+        },
+        {
+        "index": 2,
+        "name": "HostInformation",
+        "isNumeric": false,
+        "unitKind": 0
+        },
+        {
+        "index": 3,
+        "name": "Author",
+        "isNumeric": false,
+        "unitKind": 0
+        },
+        {
+        "index": 4,
+        "name": "Email",
+        "isNumeric": false,
+        "unitKind": 0
+        },
+        {
+        "index": 5,
+        "name": "Sha",
+        "isNumeric": false,
+        "unitKind": 0
+        },
+        {
+        "index": 6,
+        "name": "WasClean",
+        "isNumeric": false,
+        "unitKind": 0
+        },
+        {
+        "index": 7,
+        "name": "Method",
+        "isNumeric": false,
+        "unitKind": 0
+        },
+        {
+        "index": 8,
+        "name": "Mean",
+        "isNumeric": true,
+        "unitKind": 1
+        },
+        {
+        "index": 9,
+        "name": "Error",
+        "isNumeric": true,
+        "unitKind": 1
+        },
+        {
+        "index": 10,
+        "name": "Ratio",
+        "isNumeric": true,
+        "unitKind": 0
+        },
+        {
+        "index": 11,
+        "name": "Rank",
+        "isNumeric": true,
+        "unitKind": 0
+        }
+        ],
         "rows": [
-        { "values": [ "MD5", 1, 3, 1, "yja" ] },
-        { "values": [ "MD5", 2, 5, 3, "yja" ] },
-        { "values": [ "SHA256", 2, 5, 8, "vxf" ] }
+        [
+        10,
+        "2019-02-23T21:20:27.358-04:00",
+        "BenchmarkDotNet=v0.11.4, OS=Windows 10.0.17134.590 (1803/April2018Update/Redstone4)\r\nIntel Core i7-6700K CPU 4.00GHz (Skylake), 1 CPU, 8 logical and 4 physical cores\r\n.NET Core SDK=2.1.504",
+        "Ackara",
+        "ackara.dev@outlook.com",
+        "6c59a0cad2d4a17009ada37de0ff3061355b8ee1",
+        false,
+        "AlgoC",
+        1302000000,
+        "NA",
+        "1.18",
+        "3"
+        ],
+        [
+        10,
+        "2019-02-23T21:20:27.358-04:00",
+        "BenchmarkDotNet=v0.11.4, OS=Windows 10.0.17134.590 (1803/April2018Update/Redstone4)\r\nIntel Core i7-6700K CPU 4.00GHz (Skylake), 1 CPU, 8 logical and 4 physical cores\r\n.NET Core SDK=2.1.504",
+        "Ackara",
+        "ackara.dev@outlook.com",
+        "6c59a0cad2d4a17009ada37de0ff3061355b8ee1",
+        false,
+        "AlgoB",
+        1201000000,
+        "NA",
+        "1.09",
+        "2"
+        ],
+        [
+        10,
+        "2019-02-23T21:20:27.358-04:00",
+        "BenchmarkDotNet=v0.11.4, OS=Windows 10.0.17134.590 (1803/April2018Update/Redstone4)\r\nIntel Core i7-6700K CPU 4.00GHz (Skylake), 1 CPU, 8 logical and 4 physical cores\r\n.NET Core SDK=2.1.504",
+        "Ackara",
+        "ackara.dev@outlook.com",
+        "6c59a0cad2d4a17009ada37de0ff3061355b8ee1",
+        false,
+        "AlgoA",
+        1101000000,
+        "NA",
+        "1.00",
+        "1"
         ]
-        }]
+        ]
+        }
+        ]
     </script>
 
-    <script type="text/javascript" src="node_modules/knockout/build/output/knockout-latest.js"></script>
-    <script type="text/javascript" src="node_modules/chart.js/dist/Chart.min.js"></script>
-    <script type="text/javascript" src="scripts/app.min.js" data-inline="true"></script>
+    <script data-inline="true" type="text/javascript" src="node_modules/knockout/build/output/knockout-latest.js"></script>
+    <script data-inline="true" type="text/javascript" src="node_modules/chart.js/dist/Chart.min.js"></script>
+    <script data-inline="true" type="text/javascript" src="scripts/app.min.js"></script>
     <script type="text/javascript" defer>
         var vm = new VBench.HomePage();
         ko.applyBindings(vm);

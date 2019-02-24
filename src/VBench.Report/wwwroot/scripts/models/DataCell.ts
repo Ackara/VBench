@@ -8,9 +8,10 @@ namespace VBench {
             let me = this;
             this.row = parent;
             this.columnIndex = columnIndex;
+            this.units = ko.observable();
             this.value = ko.observable(value);
             this.isSelected = ko.observable(false);
-            this.shouldHide = ko.observable((columnIndex === ColumnIndex.TestNo));
+            this.isHidden = ko.observable((columnIndex < ColumnIndex.Method));
 
             this.isNumeric = ko.pureComputed(function () {
                 return typeof me.value() === "number";
@@ -30,12 +31,15 @@ namespace VBench {
         public readonly row: DataRow;
         public readonly columnIndex: number;
 
+        public history: Array<number>;
+
         public value: KnockoutObservable<any>;
         public difference: KnockoutObservable<any>;
+        public units: KnockoutObservable<string>;
 
         public isNumeric: KnockoutComputed<boolean>;
+        public isHidden: KnockoutObservable<boolean>;
         public isSelected: KnockoutObservable<boolean>;
-        public shouldHide: KnockoutObservable<boolean>;
 
         public computeDifference(x: number, y: number): string {
             let sign = (x >= y ? "+" : "-");

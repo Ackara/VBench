@@ -14,11 +14,11 @@ namespace VBench {
             this.values = ko.observableArray();
             this.isSelected = ko.observable(false);
             this.calculatedValues = calculatedValues;
-            this.benchmarkId = model.values[ColumnIndex.Method];
+            this.benchmarkId = model[ColumnIndex.Method];
 
             let value: any;
-            for (let columnIndex = 0; columnIndex < model.values.length; columnIndex++) {
-                value = model.values[columnIndex];
+            for (let columnIndex = 0; columnIndex < model.length; columnIndex++) {
+                value = model[columnIndex];
                 this.values.push(new DataCell(this, columnIndex, value));
             }
 
