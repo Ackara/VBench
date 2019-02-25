@@ -45,12 +45,12 @@
             </div>
 
             <div class="tabs row w100"
-                 data-bind="foreach: datasetTabs">
+                 data-bind="visible: (datasetTabs().length > 1), foreach: datasetTabs">
                 <button class="tab-btn header w100 p50"
                         data-bind="text: $data"></button>
             </div>
 
-            <table id="chartEditor"
+            <table id="timeline-table"
                    class="w100 alt-bg-color"
                    data-bind="with: chartEditor">
                 <thead>
@@ -79,11 +79,10 @@
     <script id="data" type="application/json">
         [
         {
-        "testNo": 10,
-        "name": "VBench_Sample_RandomTest",
+        "totalTests": 3,
+        "name": "VBench.Sample.RandomTest",
         "hostInformation": "BenchmarkDotNet=v0.11.4, OS=Windows 10.0.17134.590 (1803/April2018Update/Redstone4)\r\nIntel Core i7-6700K CPU 4.00GHz (Skylake), 1 CPU, 8 logical and 4 physical cores\r\n.NET Core SDK=2.1.504",
         "date": "0001-01-01T00:00:00",
-        "commitInformation": null,
         "columns": [
         {
         "index": 0,
@@ -168,10 +167,10 @@
         "6c59a0cad2d4a17009ada37de0ff3061355b8ee1",
         false,
         "AlgoC",
-        1302000000,
+        [{ "value": "1.3 s", "point": 1.3}, { "value": "0.9 s", "point": 0.9}, { "value": "1 s", "point": 1}],
         "NA",
         "1.18",
-        "3"
+        [1, 3, 2]
         ],
         [
         10,
@@ -185,7 +184,7 @@
         1201000000,
         "NA",
         "1.09",
-        "2"
+        [1, 2, 3]
         ],
         [
         10,
@@ -199,7 +198,7 @@
         1101000000,
         "NA",
         "1.00",
-        "1"
+        [2, 4, 8]
         ]
         ]
         }

@@ -28,7 +28,7 @@ namespace VBench {
             this._repository.fetchLastestBenchmark(this._selectedDatasetId, this.options);
 
             this._chart.data.labels.splice(0, this._chart.data.labels.length);
-            for (let i = 0; i < this.options.totalTestRuns; i++) {
+            for (let i = 0; i < this.options.totalTests; i++) {
                 this._chart.data.labels.push(`Test-${i + 1}`);
             }
 
@@ -40,15 +40,14 @@ namespace VBench {
         }
 
         public updateChart(dataCell: DataCell): void {
-            let benchmarkId: string = dataCell.row.method();
+            let benchmarkMethod: string = dataCell.row.key;
             let columnIndex: number = dataCell.columnIndex;
-            let seriesId: string = `${benchmarkId} [${dataCell.row.table.columns()[columnIndex].name()}]`;
+            let seriesId: string = `${benchmarkMethod} [${dataCell.row.table.columns()[columnIndex].name()}]`;
 
             if (dataCell.isSelected()) {
                 console.debug(`${seriesId} |> add-series`);
 
-                let dataPoints = this._repository.fetchDataPoints(this.options.id(), benchmarkId, columnIndex);
-
+                let dataPoints: Array<number> = dataCell.getDataPoints();
                 if (dataPoints.length > 0) {
                     let series = this.createSeriesBaseSettings();
                     series.data = dataPoints;
@@ -56,7 +55,7 @@ namespace VBench {
                     this._chart.data.datasets.push(series);
                 }
                 else {
-                    console.debug("toast an error");
+                    console.debug("toast an error: no history");
                 }
             }
             else {

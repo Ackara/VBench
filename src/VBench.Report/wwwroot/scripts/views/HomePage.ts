@@ -8,7 +8,7 @@ namespace VBench {
     export class HomePage {
         constructor() {
             this._repository = new Repository();
-            let datasetNames: Array<string> = this._repository.fetchNamesOfAllDatasets();
+            let datasetNames: Array<string> = this._repository.fetchDatasetNames();
             this.datasetTabs = ko.observableArray(datasetNames);
             this.selectedDataset = ko.observable(datasetNames[0]);
 
@@ -25,7 +25,7 @@ namespace VBench {
 
         public attachEventHandlers(): void {
             let me = this;
-            document.getElementById("chartEditor").addEventListener("click", function (e) {
+            document.getElementById("timeline-table").addEventListener("click", function (e) {
                 let context = ko.contextFor(e.target);
                 if (context.$data.typeId === DataCell.TypeCode) {
                     let cell: DataCell = context.$data;

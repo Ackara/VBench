@@ -5,15 +5,17 @@
 namespace VBench {
     export class DataTable {
         constructor() {
-            this.id = ko.observable();
+            this.name = ko.observable();
             this.rows = ko.observableArray();
             this.columns = ko.observableArray();
             this.description = ko.observable("");
         }
 
-        public totalTestRuns: number = 0;
-        public id: KnockoutObservable<string>;
+        public totalTests: number;
+
+        public name: KnockoutObservable<string>;
         public description: KnockoutObservable<string>;
+
         public rows: KnockoutObservableArray<DataRow>;
         public columns: KnockoutObservableArray<DataColumn>;
 
@@ -23,8 +25,8 @@ namespace VBench {
             return newColumn;
         }
 
-        public addRow(model: any, calculatedValues: Array<any>): DataRow {
-            let newRow = new DataRow(this, model, calculatedValues);
+        public addRow(model: any): DataRow {
+            let newRow = new DataRow(this, model);
             this.rows.push(newRow);
             return newRow;
         }
