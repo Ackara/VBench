@@ -69,19 +69,27 @@ foreach ($file in (Get-ChildItem $wwwrootFolder -Filter "*.html"))
 		if (-not [string]::IsNullOrEmpty($link.Path))
 		{
 			$link.HtmlNode.Attributes.Remove("data-inline");
-			$content = $html.CreateTextNode((Get-Content $link.Path | Out-String));
 			switch($link.HtmlNode.Name)
 			{
 				"link" {
-					$link.HtmlNode.Attributes.Remove("href");
-					$link.HtmlNode.Attributes.Remove("ref");
-					$link.HtmlNode.Name = "style";
-					$link.HtmlNode.AppendChild($content) | Out-Null;
+					if ($link.Path.EndsWith('.css'))
+					{
+						$link.HtmlNode.Attributes.Remove("href");
+						$link.HtmlNode.Name = "style";
+						$content = $html.CreateTextNode((Get-Content $link.Path | Out-String).Trim());
+						$link.HtmlNode.AppendChild($content) | Out-Null;
+					}
+					else
+					{
+						$imageData = [Convert]::ToBase64String((Get-Content $link.Path -Encoding Byte));
+						$link.HtmlNode.SetAttributeValue("href", "data:image/x-icon;base64, $imageData");
+					}
 				}
 
 				"script" {
 					$link.HtmlNode.Attributes.Remove("src");
 					$link.HtmlNode.RemoveAllChildren();
+					$content = $html.CreateTextNode((Get-Content $link.Path | Out-String));
 					$link.HtmlNode.AppendChild($content) | Out-Null;
 				}
 			}

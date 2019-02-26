@@ -1,7 +1,6 @@
 ﻿/// <reference path="../../../node_modules/@types/knockout/index.d.ts" />
 /// <reference path="../components/ChartEditor.ts" />
 /// <reference path="../domain/Repository.ts" />
-/// <reference path="../models/ISelectable.ts" />
 /// <reference path="../models/DataRow.ts" />
 
 namespace VBench {
@@ -16,12 +15,11 @@ namespace VBench {
             this.chartEditor.changeDataset(datasetNames[0]);
         }
 
+        private readonly _repository: Repository;
         public readonly chartEditor: ChartEditor;
 
         public selectedDataset: KnockoutObservable<string>;
         public datasetTabs: KnockoutObservableArray<string>;
-
-        private readonly _repository: Repository;
 
         public attachEventHandlers(): void {
             let me = this;

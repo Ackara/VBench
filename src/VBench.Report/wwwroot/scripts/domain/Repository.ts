@@ -17,14 +17,12 @@ namespace VBench {
             let result = (out || new DataTable());
 
             let dataset = this.fetchDataset(datasetId);
-            result.totalTests = dataset.totalTests;
             result.name(datasetId);
             result.clear();
 
             let numberOfColumns = dataset.columns.length;
             for (let i = 0; i < numberOfColumns; i++) {
-                let col = result.addColumn(dataset.columns[i]);
-                col.shouldHide(i < ColumnIndex.Method);
+                result.addColumn(dataset.columns[i]);
             }
 
             for (let i = 0; i < dataset.rows.length; i++) {

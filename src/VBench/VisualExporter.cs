@@ -22,6 +22,7 @@ namespace Acklann.VBench
         {
             Name = $"{nameof(VBench)}";
             _name = $"{nameof(VBench).ToLowerInvariant()}";
+            _unitsOfTime.Add("us", TimeUnit.Nanosecond); //For some reason TimeUnit don't have us registed as nanoseconds.
         }
 
         internal const int TOTAL_INTERNAL_VALUES = 7;
@@ -48,7 +49,11 @@ namespace Acklann.VBench
 
                 var script = html.GetElementbyId("data");
                 script.RemoveAllChildren();
-                script.AppendChild(html.CreateTextNode(JsonConvert.SerializeObject(mergedData, Formatting.Indented, _jsonSettings)));
+                script.AppendChild(html.CreateTextNode(JsonConvert.SerializeObject(mergedData, new JsonSerializerSettings()
+                {
+                    Formatting = Formatting.Indented,
+                    ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
+                })));
                 html.Save(output);
             }
 
@@ -98,74 +103,81 @@ namespace Acklann.VBench
                 foreach (string collectionName in db.GetCollectionNames())
                 {
                     var store = db.GetCollection<CuratedDataset>(collectionName);
-                    var item = MergeCollection(store);
+                    var item = ConsolidateCollection(store);
                     if (item?.Rows.Length > 0) yield return item;
                 }
             }
         }
 
-        internal static CuratedDataset MergeCollection(LiteCollection<CuratedDataset> store)
+        internal static CuratedDataset ConsolidateCollection(LiteCollection<CuratedDataset> store)
         {
             if (store == null) throw new ArgumentNullException(nameof(store));
 
             object[] storedValues, curatedValues;
-            var curatedRows = new Stack<object[]>();
-            CuratedDatasetColumn[] lastestColumns = null;
             var curatedColumns = new Stack<CuratedDatasetColumn>();
-            var result = new CuratedDataset { Name = store.Name };
-            int index; bool firstItem = true;
+            var result = new CuratedDataset { Name = store.Name.Replace('_', '.') };
+            int columnIndex;
 
-            foreach (CuratedDataset storedDataset in store.FindAll().OrderByDescending(x => x.TestNo))
+            CuratedDataset[] allTheTests = store.FindAll().ToArray();
+            if (allTheTests.Length > 0)
             {
-                if (firstItem) // The 1st item is the latest benchmark
-                {
-                    result.TestNo = storedDataset.TestNo;
-                    result.HostInformation = storedDataset.HostInformation;
-                    lastestColumns = storedDataset.Columns;
+                CuratedDataset mostRecentTest = allTheTests.Last();
+                result.Rows = new object[mostRecentTest.Rows.Length][];
+                curatedValues = new object[mostRecentTest.Columns.Length];
+                result.Columns = mostRecentTest.Columns.Select(x => x.Clone()).ToArray();
 
-                    index = 0;
-                    result.Columns = new CuratedDatasetColumn[(TOTAL_INTERNAL_VALUES + lastestColumns.Length)];
-                    foreach (var column in Enumerable.Concat(CuratedDatasetColumn.GetInternalColumns(), lastestColumns))
+                for (int rowIndex = 0; rowIndex < mostRecentTest.Rows.Length; rowIndex++)
+                {
+                    columnIndex = 0;
+                    storedValues = mostRecentTest.Rows[rowIndex];
+                    foreach (CuratedDatasetColumn column in mostRecentTest.Columns)
                     {
-                        result.Columns[index] = column.Clone();
-                        result.Columns[index].Index = index++;
+                        if (column.IsNumeric)
+                            curatedValues[columnIndex++] = getHistoricalData(allTheTests, Convert.ToString(storedValues[method_column_index]), column.Name, allTheTests.Length);
+                        else
+                            curatedValues[columnIndex++] = storedValues[column.Index];
                     }
+                    result.Rows[rowIndex] = new object[curatedValues.Length];
+                    curatedValues.CopyTo(result.Rows[rowIndex], 0);
                 }
-                
-                for (int rowIndex = 0; rowIndex < storedDataset.Rows.Length; rowIndex++)
-                {
-                    index = 0;
-                    storedValues = storedDataset.Rows[rowIndex];
-                    var internalValues = new object[TOTAL_INTERNAL_VALUES] {
-                        storedDataset.TestNo, storedDataset.Date, storedDataset.HostInformation,
-                        storedDataset.CommitInformation.Author, storedDataset.CommitInformation.Email, storedDataset.CommitInformation.Sha, storedDataset.CommitInformation.WasClean
-                    };
-                    curatedValues = new object[internalValues.Length + lastestColumns.Length];
-
-                    foreach (object value in internalValues)
-                        curatedValues[index++] = value;
-
-                    foreach (var column in lastestColumns)
-                        switch (column.UnitKind)
-                        {
-                            default:
-                                curatedValues[index++] = storedValues[column.Index];
-                                break;
-
-                            case UnitType.Time:
-                                curatedValues[index++] = TryConvertTime(storedValues[column.Index], TimeUnit.Nanosecond);
-                                break;
-
-                            case UnitType.Size:
-                                curatedValues[index++] = TryConvertSize(storedValues[column.Index], SizeUnit.B);
-                                break;
-                        }
-                    curatedRows.Push(curatedValues);
-                }
-
-                firstItem = false;
             }
-            result.Rows = curatedRows.ToArray();
+
+            object[] getHistoricalData(IEnumerable<CuratedDataset> tests, string method, string columnName, int capacity)
+            {
+                var history = new List<object>(capacity);
+
+                foreach (var data in tests)
+                    foreach (var row in data.Rows)
+                        if (string.Equals(row[method_column_index], method))
+                        {
+                            CuratedDatasetColumn column = findColumn(data, columnName);
+
+                            if (column == null) history.Add(null);
+                            else switch (column.UnitKind)
+                                {
+                                    case UnitType.Time:
+                                        history.Add(TryConvertBackTo(TimeUnit.Nanosecond, row[column.Index]));
+                                        break;
+
+                                    case UnitType.Size:
+                                        history.Add(TryConvertBackTo(SizeUnit.B, row[column.Index]));
+                                        break;
+
+                                    default:
+                                        if (double.TryParse(Convert.ToString(row[column.Index])?.Replace(",", ""), out double number))
+                                            history.Add(number);
+                                        else
+                                            history.Add(null);
+                                        break;
+                                }
+                            break;
+                        }
+
+                return history.ToArray();
+            }
+
+            CuratedDatasetColumn findColumn(CuratedDataset dataset, string name) => dataset.Columns.Where(x => x.Name == name).FirstOrDefault();
+
             return result;
         }
 
@@ -189,6 +201,7 @@ namespace Acklann.VBench
 
                         return new CommitInfo
                         {
+                            Branch = repo.Branches.First(x => x.IsCurrentRepositoryHead && !x.IsRemote).FriendlyName,
                             WasClean = (newAndModifiedFiles.Count() == 0),
                             Date = lastCommit.Committer.When.Date,
                             Author = lastCommit.Committer.Name,
@@ -215,43 +228,61 @@ namespace Acklann.VBench
 
         #region Private Members
 
-        private static readonly Regex _unitPattern = new Regex(@"(?<value>\d+(\.\d+)?) *(?<unit>[a-z]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private const int method_column_index = 0;
+        private static readonly Regex _unitPattern = new Regex(@"(?<value>(\d+,?)+(\.\d+)?) *(?<unit>[a-z]+)?", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly IDictionary<MultiEncodingString, TimeUnit> _unitsOfTime = TimeUnit.All.ToDictionary(x => x.Name);
         private static readonly IDictionary<string, SizeUnit> _unitsOfSize = SizeUnit.All.ToDictionary(x => x.Name);
 
-        private static readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings()
-        {
-            ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
-        };
-
         private readonly string _name;
 
-        private static object TryConvertTime(object value, TimeUnit unit)
+        private static object TryConvertBackTo(TimeUnit unit, object value)
         {
             if (value == null) return value;
 
             Match match = _unitPattern.Match(value.ToString());
             if (match.Success)
             {
-                TimeUnit oringinal = _unitsOfTime[match.Groups["unit"].Value];
-                return TimeUnit.Convert(Convert.ToDouble(match.Groups["value"].Value), oringinal, unit);
+                TimeUnit original = _unitsOfTime[match.Groups["unit"].Value];
+                return new ScaledValue(
+                    value: TimeUnit.Convert(Convert.ToDouble(match.Groups["value"].Value.Replace(",", "")), original, unit),
+                    friendlyValue: match.Value.Trim());
             }
-
-            return value;
+            else return value;
         }
 
-        private static object TryConvertSize(object value, SizeUnit unit)
+        private static object TryConvertBackTo(SizeUnit unit, object value)
         {
             if (value == null) return value;
 
             Match match = _unitPattern.Match(value.ToString());
             if (match.Success)
             {
-                SizeUnit oringinal = _unitsOfSize[match.Groups["unit"].Value];
-                return SizeUnit.Convert(Convert.ToInt64(match.Groups["value"].Value), oringinal, unit);
+                SizeUnit original = _unitsOfSize[match.Groups["unit"].Value];
+                return new ScaledValue(
+                    value: SizeUnit.Convert(Convert.ToInt64(match.Groups["value"].Value.Replace(",", "")), original, unit),
+                    friendlyValue: match.Value.Trim());
             }
+            else return value;
+        }
 
-            return value;
+        private static IEnumerable<object> NormalizeTimeUnits(IList<object> values)
+        {
+            var bestUnit = TimeUnit.GetBestTimeUnit((from x in values where x is ScaledValue select ((ScaledValue)x).Value).ToArray());
+            foreach (var item in values)
+                if (item is ScaledValue sv)
+                    yield return new ScaledValue(TimeUnit.Convert(sv.Value, TimeUnit.Nanosecond, bestUnit), sv.FriendlyValue);
+                else
+                    yield return null;
+        }
+
+        private static IEnumerable<object> NormalizeSizeUnits(IList<object> values)
+        {
+            var bestUnit = SizeUnit.GetBestSizeUnit((from x in values where x is ScaledValue select Convert.ToInt64(((ScaledValue)x).Value)).ToArray());
+            foreach (var item in values)
+                if (item is ScaledValue sv)
+                    yield return new ScaledValue(SizeUnit.Convert(Convert.ToInt64(sv.Value), SizeUnit.B, bestUnit), sv.FriendlyValue);
+                else
+                    yield return null;
         }
 
         #endregion Private Members

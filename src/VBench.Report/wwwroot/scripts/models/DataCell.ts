@@ -1,13 +1,13 @@
 ﻿/// <reference path="../../../node_modules/@types/knockout/index.d.ts" />
 /// <reference path="../domain/ComparisonMethod.ts" />
+/// <reference path="../domain/Formatter.ts" />
 /// <reference path="../domain/UnitType.ts" />
 /// <reference path="DataColumn.ts" />
 /// <reference path="DataRow.ts" />
 
 namespace VBench {
     export class DataCell {
-        constructor(parent: DataRow, columnIndex: number, value: any) {
-            let me = this;
+        constructor(parent: DataRow, columnIndex: number, model: any) {
             this.row = parent;
             this.columnIndex = columnIndex;
             this.comparison = ko.observable(ComparisonMethod.previous);
@@ -17,8 +17,7 @@ namespace VBench {
             this.difference = ko.observable();
             this.isNumeric = ko.observable(false);
             this.isSelected = ko.observable(false);
-            this.isHidden = ko.observable((columnIndex < ColumnIndex.Method));
-            this.computeValue(value, parent.table.columns()[columnIndex]);
+            this.computeValue(model, parent.table.columns()[columnIndex]);
             this.computeDifference();
         }
 
@@ -37,7 +36,6 @@ namespace VBench {
 
         public isNumeric: KnockoutObservable<boolean>;
         public isSelected: KnockoutObservable<boolean>;
-        public isHidden: KnockoutObservable<boolean>;
 
         // =============== Computation =============== //
 
@@ -56,7 +54,7 @@ namespace VBench {
                     case UnitType.time:
                     case UnitType.size:
                         let obj = array[array.length - 1];
-                        this.value(obj.value);
+                        this.value(obj ? obj.friendlyValue : null);
                         break;
                 }
             }
@@ -82,8 +80,8 @@ namespace VBench {
                 case UnitType.time:
                 case UnitType.size:
                     for (let i = 0; i < this.history.length; i++) {
-                        value = this.history[i].point;
-                        points.push((typeof value === "number" ? value : null))
+                        value = this.history[i];
+                        points.push((value && (typeof value.value === "number") ? value.value : null))
                     }
                     break;
             }
@@ -95,8 +93,10 @@ namespace VBench {
             let values: Array<number> = this.getDataPoints();
             if (values.length === 0) { return null; }
 
-            let current: number, min: number, max: number, other;
+            let current: number, other: number;
             current = values[values.length - 1];
+
+            if (current === null || current === undefined) { return; }
 
             switch (this.comparison()) {
                 case ComparisonMethod.previous:
@@ -118,11 +118,17 @@ namespace VBench {
                     break;
             }
 
+            if (other === null || other === undefined) { return; }
+
             let sign = (current >= other ? "+" : "-");
             let difference = Math.abs(other - current);
-            let percentile = ((difference / other) * 100);
+            let percentile: any = ((difference / (other === 0 ? 1 : other)) * 100);
 
-            this.difference(`[${sign}${difference} (${(percentile >= 1 ? percentile.toFixed(0) : percentile.toFixed(2))}%)]`);
+            let output = `[${sign}${Formatter.format(difference, this.unitKind)}`;
+            if (percentile <= 100) output += ` (${(percentile >= 1 ? percentile.toFixed(0) : percentile.toFixed(2))}%)`;
+            else output += ` (>100%)`;
+
+            this.difference(output + ']');
         }
     }
 }

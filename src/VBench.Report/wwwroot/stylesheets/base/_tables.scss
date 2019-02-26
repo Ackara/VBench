@@ -28,6 +28,10 @@ th, td {
     padding: $cell-padding;
 }
 
+td {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 .cell {
     padding: 0;
 
@@ -43,7 +47,7 @@ th, td {
     }
 
     &.is-active {
-        background-color: invert($background-color, 5);
+        background-color: $accent-color-2;
 
         & > * {
             border-left-color: $accent-color-1;
@@ -52,6 +56,10 @@ th, td {
 
         .cell-value {
             opacity: 1;
+        }
+
+        .cell-value.computed{
+            color: lighten($accent-color-1, 30);
         }
     }
 }
@@ -65,7 +73,6 @@ th, td {
 
     &.computed {
         opacity: 0;
-        font-weight: lighter;
         color: $subtle-text-color;
     }
 }

@@ -2,6 +2,7 @@
 /// <reference path="../../../node_modules/@types/knockout/index.d.ts" />
 /// <reference path="../components/ColorGenerator.ts" />
 /// <reference path="../domain/Repository.ts" />
+/// <reference path="../domain/Formatter.ts" />
 /// <reference path="../models/DataTable.ts" />
 /// <reference path="../models/DataCell.ts" />
 
@@ -28,10 +29,6 @@ namespace VBench {
             this._repository.fetchLastestBenchmark(this._selectedDatasetId, this.options);
 
             this._chart.data.labels.splice(0, this._chart.data.labels.length);
-            for (let i = 0; i < this.options.totalTests; i++) {
-                this._chart.data.labels.push(`Test-${i + 1}`);
-            }
-
             while (this._chart.data.datasets.length > 0) {
                 this._chart.data.datasets.pop();
             }
@@ -48,10 +45,17 @@ namespace VBench {
                 console.debug(`${seriesId} |> add-series`);
 
                 let dataPoints: Array<number> = dataCell.getDataPoints();
+
                 if (dataPoints.length > 0) {
+                    this._chart.data.labels.splice(0, this._chart.data.labels.length);
+                    for (let i = 0; i < dataPoints.length; i++) {
+                        this._chart.data.labels.push(`Test-${i + 1}`);
+                    }
+
                     let series = this.createSeriesBaseSettings();
                     series.data = dataPoints;
                     series.label = seriesId;
+                    (<any>series).vbench_unitType = dataCell.unitKind;
                     this._chart.data.datasets.push(series);
                 }
                 else {
@@ -69,6 +73,7 @@ namespace VBench {
                     }
                 }
             }
+
             this._chart.update();
         }
 
@@ -87,7 +92,7 @@ namespace VBench {
         }
 
         private createLineChart(): Chart {
-            let labelColor = this._colorPicker.textColor.getValue(0.5);
+            let labelColor = this._colorPicker.textColor;
             let gridLineColor = this._colorPicker.textColor.getValue(0.1);
             return new Chart(<HTMLCanvasElement>document.getElementById("chart"), {
                 type: 'line',
@@ -99,7 +104,7 @@ namespace VBench {
                                 color: gridLineColor
                             },
                             ticks: {
-                                fontColor: labelColor
+                                fontColor: labelColor.getValue(0.75)
                             }
                         }],
                         yAxes: [{
@@ -107,10 +112,21 @@ namespace VBench {
                                 color: gridLineColor
                             },
                             ticks: {
-                                beginAtZero: true,
-                                fontColor: labelColor
+                                display: true,
+                                fontColor: labelColor.getValue(0.5)
                             }
                         }]
+                    },
+                    tooltips: {
+                        titleFontSize: 18,
+                        bodyFontSize: 18,
+                        bodyFontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                        callbacks: {
+                            label: (item, data) => {
+                                let set = data.datasets[item.datasetIndex];
+                                return ` ${set.label}: ${Formatter.format(<number>set.data[item.index], (<any>set).vbench_unitType)}`;
+                            }
+                        }
                     }
                 }
             });
