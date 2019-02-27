@@ -17,50 +17,60 @@ using System.Text.RegularExpressions;
 
 namespace Acklann.VBench
 {
-    
-    public class VisualExporter : IExporter
+    public class TimelineExporter : IExporter
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="VisualExporter"/> class.
+        /// Initializes a new instance of the <see cref="TimelineExporter"/> class.
         /// </summary>
-        public VisualExporter() : this(false)
+        public TimelineExporter() : this(false)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="VisualExporter"/> class.
+        /// Initializes a new instance of the <see cref="TimelineExporter"/> class.
         /// </summary>
         /// <param name="captureGitEmail">if set to <c>true</c> [capture git email].</param>
-        public VisualExporter(bool captureGitEmail)
+        public TimelineExporter(bool captureGitEmail)
         {
             Name = $"{nameof(VBench)}";
+            _fileName = $"{nameof(VBench).ToLowerInvariant()}";
+            _templateName = Template.Timeline;
+
             _captureEmail = captureGitEmail;
-            _name = $"{nameof(VBench).ToLowerInvariant()}";
             _unitsOfTime.Add("us", TimeUnit.Nanosecond); //For some reason TimeUnit don't have us registed as nanoseconds.
         }
 
         /// <summary>
         /// Gets the name.
         /// </summary>
-        /// <value>
-        /// The name.
-        /// </value>
+        /// <value>The name.</value>
         public string Name { get; }
 
+        /// <summary>
+        /// Exports to log.
+        /// </summary>
+        /// <param name="summary">The summary.</param>
+        /// <param name="logger">The logger.</param>
         public void ExportToLog(Summary summary, ILogger logger)
         {
         }
 
+        /// <summary>
+        /// Exports to files.
+        /// </summary>
+        /// <param name="summary">The summary.</param>
+        /// <param name="consoleLogger">The console logger.</param>
+        /// <returns></returns>
         public IEnumerable<string> ExportToFiles(Summary summary, ILogger consoleLogger)
         {
-            string databaseFilePath = Path.Combine(summary.ResultsDirectoryPath, $"{_name}.litedb");
+            string databaseFilePath = Path.Combine(summary.ResultsDirectoryPath, $"{_fileName}.litedb");
             CuratedDataset lastestBenchmark = UpdateDatabase(summary, databaseFilePath, _captureEmail);
             IEnumerable<CuratedDataset> mergedData = ExportDatabase(databaseFilePath);
 
-            Assembly assembly = typeof(VisualExporter).Assembly;
-            string reportFilePath = Path.Combine(summary.ResultsDirectoryPath, $"{_name}.html");
+            Assembly assembly = typeof(TimelineExporter).Assembly;
+            string reportFilePath = Path.Combine(summary.ResultsDirectoryPath, $"{_fileName}.html");
             using (Stream output = new FileStream(reportFilePath, System.IO.FileMode.Create, FileAccess.Write, FileShare.Read))
-            using (Stream source = assembly.GetManifestResourceStream(assembly.GetManifestResourceNames().First(x => x.EndsWith(".html"))))
+            using (Stream source = assembly.GetManifestResourceStream(assembly.GetManifestResourceNames().First(x => x.EndsWith(_templateName))))
             {
                 var html = new HtmlAgilityPack.HtmlDocument();
                 html.Load(source);
@@ -157,7 +167,7 @@ namespace Acklann.VBench
                     curatedValues.CopyTo(result.Rows[rowIndex], 0);
                 }
 
-                result.Contributions = new Contribution[allTheTests.Length];
+                result.Contributions = new Contributor[allTheTests.Length];
                 for (int i = 0; i < allTheTests.Length; i++)
                     result.Contributions[i] = allTheTests[i].Contributions[0];
             }
@@ -201,7 +211,7 @@ namespace Acklann.VBench
             return result;
         }
 
-        internal static Contribution FetchRepositoryInfo(Summary summary, bool captureEmail)
+        internal static Contributor FetchRepositoryInfo(Summary summary, bool captureEmail)
         {
             string cwd = summary?.ResultsDirectoryPath;
             if (string.IsNullOrEmpty(cwd)) throw new ArgumentNullException(nameof(cwd));
@@ -220,7 +230,7 @@ namespace Acklann.VBench
                             x.State.HasFlag(FileStatus.RenamedInIndex) || x.State.HasFlag(FileStatus.RenamedInWorkdir));
 
                         string email = (captureEmail ? lastCommit.Committer.Email : null);
-                        return new Contribution
+                        return new Contributor
                         {
                             HardwareInformation = string.Join(Environment.NewLine, summary.HostEnvironmentInfo.ToFormattedString()),
                             Branch = repo.Branches.First(x => x.IsCurrentRepositoryHead && !x.IsRemote).FriendlyName,
@@ -265,8 +275,8 @@ namespace Acklann.VBench
         private static readonly IDictionary<MultiEncodingString, TimeUnit> _unitsOfTime = TimeUnit.All.ToDictionary(x => x.Name);
         private static readonly IDictionary<string, SizeUnit> _unitsOfSize = SizeUnit.All.ToDictionary(x => x.Name);
 
-        private readonly string _name;
         private readonly bool _captureEmail;
+        private readonly string _fileName, _templateName;
 
         private static object TryConvertBackTo(TimeUnit unit, object value)
         {

@@ -10,7 +10,7 @@ namespace VBench.Sample
         private static void Main(string[] args)
         {
             BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args, DefaultConfig.Instance
-                .With(new VisualExporter()));
+                .With(new TimelineExporter()));
         }
     }
 }

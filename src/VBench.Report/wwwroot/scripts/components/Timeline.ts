@@ -129,7 +129,7 @@ namespace VBench {
                         yAxes: [{
                             gridLines: {
                                 display: true,
-                                color: gridLineColor.getValue(0.01)
+                                color: gridLineColor.getValue(0.05)
                             },
                             ticks: {
                                 display: false,

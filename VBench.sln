@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".misc", ".misc", "{5B98F190
 		.gitignore = .gitignore
 		build.ps1 = build.ps1
 		commands.json = commands.json
+		README.md = README.md
 		secrets.json = secrets.json
 	EndProjectSection
 EndProject
@@ -17,7 +18,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VBench.Report", "src\VBench
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VBench", "src\VBench\VBench.csproj", "{16D1FFA0-00DF-4DC5-91BB-CB690607A56F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VBench.Sample", "tests\VBench.Sample\VBench.Sample.csproj", "{40A2AA10-4995-43A8-B58A-C8AE1738CEA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VBench.Sample", "tests\VBench.Sample\VBench.Sample.csproj", "{40A2AA10-4995-43A8-B58A-C8AE1738CEA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

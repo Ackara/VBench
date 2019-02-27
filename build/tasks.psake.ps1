@@ -36,7 +36,7 @@ Task "Configure-Environment" -alias "configure" -description "This task generate
 	# Generating a secrets file template to store sensitive information.
 	if (-not (Test-Path $SecretsFilePath))
 	{
-		$content = "{ nugetKey: null, psGalleryKey: null }";
+		$content = '{ "nugetKey": null }';
 		$content | ConvertTo-Json | Out-File $SecretsFilePath -Encoding utf8;
 	}
 	Write-Host "  * added '$(Split-Path $SecretsFilePath -Leaf)' to the solution.";
@@ -48,9 +48,8 @@ Task "Package-Solution" -alias "pack" -description "This task generates all depl
 	New-Item $ArtifactsFolder -ItemType Directory | Out-Null;
 
 	$version = ConvertTo-NcrementVersionNumber $ManifestFilePath $CurrentBranch;
-	Join-Path $SolutionFolder "src/*/*" | Get-ChildItem -File -Filter "*.*proj" | Invoke-NugetPack $ArtifactsFolder $Configuration $version.FullVersion;
+	Join-Path $SolutionFolder "src/$(Split-Path $SolutionFolder -Leaf)" | Get-ChildItem -File -Filter "*.*proj" | Invoke-NugetPack $ArtifactsFolder $Configuration $version.FullVersion;
 }
-
 
 #region ----- COMPILATION -----
 
@@ -89,8 +88,8 @@ Task "Build-Solution" -alias "build" -description "This task compiles projects i
 
 Task "Run-Tests" -alias "test" -description "This task invoke all tests within the 'tests' folder." `
 -action {
-	Join-Path $SolutionFolder "tests" | Get-ChildItem -Recurse -File -Filter "*.tests.ps1" | Invoke-PowershellTest $ToolsFolder;
-	Join-Path $SolutionFolder "tests" | Get-ChildItem -Recurse -File -Filter "*.*proj" | Invoke-MSTest $Configuration;
+	#Join-Path $SolutionFolder "tests" | Get-ChildItem -Recurse -File -Filter "*.tests.ps1" | Invoke-PowershellTest $ToolsFolder;
+	#Join-Path $SolutionFolder "tests" | Get-ChildItem -Recurse -File -Filter "*.*proj" | Invoke-MSTest $Configuration;
 }
 
 #endregion

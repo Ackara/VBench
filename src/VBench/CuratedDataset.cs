@@ -10,7 +10,7 @@ namespace Acklann.VBench
 
         public string Name { get; set; }
 
-        public Contribution[] Contributions { get; internal set; }
+        public Contributor[] Contributions { get; internal set; }
 
         public CuratedDatasetColumn[] Columns { get; set; }
 

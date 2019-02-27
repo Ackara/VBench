@@ -3,6 +3,7 @@
 <head>
     <title>VBench</title>
     <meta name="author" content="Ackara" />
+    <meta name="application-name" content="Timeline" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link data-inline="true" rel="icon" type="image/x-icon" href="favicon.ico" />
@@ -28,9 +29,9 @@
                 </header>
 
                 <div class="links row right wrap baseline w100">
-                    <!--<a target="_blank" href="#"><i class="sf-icon sf-icon-donate"></i></a>
-                    <a target="_blank" href="https://folio12.azurewebsites.net/"><i class="sf-icon sf-icon-web"></i></a>-->
-                    <a target="_blank" title="GitHub" href="https://github.com/Ackara"><svg><use xlink:href="#github-svg"></use></svg></a>
+                    <!--<a target="_blank" title="Donate" href="#"><i class="sf-icon sf-icon-donate"></i></a>
+                    <a target="_blank" title="Web" href="https://folio12.azurewebsites.net/"><i class="sf-icon sf-icon-web"></i></a>-->
+                    <a target="_blank" title="GitHub" href="https://github.com/Ackara/VBench"><svg><use xlink:href="#github-svg"></use></svg></a>
                 </div>
             </div>
 
@@ -108,47 +109,36 @@
         }
         ],
         "columns": [
-        {
-        "name": "Method",
-        "isNumeric": false,
-        "unitKind": 0
-        },
-        {
-        "name": "Mean",
-        "isNumeric": true,
-        "unitKind": 1
-        },
-        {
-        "name": "Error",
-        "isNumeric": true,
-        "unitKind": 1
-        },
-        {
-        "name": "Rank",
-        "isNumeric": true,
-        "unitKind": 0
-        }
+        { "name": "Method", "isNumeric": false, "unitKind": 0 },
+        { "name": "Mean", "isNumeric": true, "unitKind": 1 },
+        { "name": "Allocated", "isNumeric": true, "unitKind": 2 }
         ],
         "rows": [
         [
-        "'Deep Sleep'",
+        "Algorithm A",
         [
+        { "value": 21, "friendlyValue": "21 ns" },
+        { "value": 13, "friendlyValue": "13 ns" },
+        { "value": 5, "friendlyValue": "5 ns" }
+        ],
+        [
+        { "value": 16, "friendlyValue": "16 B" },
+        { "value": 128, "friendlyValue": "128 B" },
+        { "value": 18, "friendlyValue": "18 B" }
+        ]
+        ],
+        [
+        "Algorithm B",
+        [
+        { "value": 2, "friendlyValue": "2 ns" },
         { "value": 8, "friendlyValue": "8 ns" },
-        { "value": 5, "friendlyValue": "5 ns" },
-        { "value": 3, "friendlyValue": "3 ns" }
-        ],
-        [ "N/A" ],
-        [ 1, 1, 1 ]
+        { "value": 32, "friendlyValue": "32 ns" }
         ],
         [
-        "RestlessSleep",
-        [
-        { "value": 3000, "friendlyValue": "3 ms" },
-        { "value": 5000, "friendlyValue": "5 ms" },
-        { "value": 1500000000, "friendlyValue": "1 s" }
-        ],
-        [ "NA" ],
-        [ 2, 2, 2 ]
+        { "value": 5, "friendlyValue": "5 B" },
+        { "value": 12, "friendlyValue": "12 B" },
+        { "value": 35, "friendlyValue": "35 B" }
+        ]
         ]
         ]
         }

@@ -6,11 +6,11 @@
     <RootNamespace>Acklann.VBench</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Acklann.Traneleon" Version="1.2.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="BenchmarkDotNet" Version="0.11.4" />
     <PackageReference Include="HtmlAgilityPack" Version="1.9.0" />
     <PackageReference Include="LibGit2Sharp" Version="0.26.0" />
@@ -19,10 +19,33 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="reports/*.html" />
+    <EmbeddedResource Include="templates/*.html" />
   </ItemGroup>
 
-  <Target Name="CompileHtmlReports" BeforeTargets="PreBuildEvent">
+  <ItemGroup>
+    <Folder Include="templates\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Template.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Template.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Template.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Template.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <Target Name="CompileHtmlTemplates" BeforeTargets="PreBuildEvent">
     <Exec StandardOutputImportance="low" Command="powershell -ExecutionPolicy Bypass -NoProfile -NonInteractive -File pack.ps1" />
   </Target>
 </Project>

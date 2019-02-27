@@ -1,9 +1,10 @@
 ﻿Param()
 
 [long]$start = [DateTime]::Now.Ticks;
-[string]$outFolder = Join-Path $PSScriptRoot "reports";
+[string]$outFolder = Join-Path $PSScriptRoot "templates";
 [string]$reportProjectFolder = Join-Path (Split-Path $PSScriptRoot -Parent) "*.Report" | Resolve-Path;
 [string]$wwwrootFolder = Join-Path $reportProjectFolder "wwwroot";
+Get-ChildItem $outFolder -File | Remove-Item;
 
 #region Functions
 
@@ -57,13 +58,22 @@ Clear-Host;
 Get-NugetPackage | Import-Module -Force;
 foreach ($file in (Get-ChildItem $wwwrootFolder -Filter "*.html"))
 {
-	Write-Host " * found '$($file.Name)'";
-
-	$outFile = Join-Path $outFolder ("$($file.BaseName).min.html");
-	Copy-Item $file.FullName -Destination $outFile -Force;
+	[string]$outFile = $null;
 
 	$html = [HtmlAgilityPack.HtmlDocument]::new();
 	$html.Load($file.FullName);
+	$titleNode = $html.DocumentNode.SelectSingleNode("//meta[@name='application-name']");
+	if ($titleNode -eq $null) { continue; }
+	else
+	{
+		$name = $titleNode.GetAttributeValue("content", "");
+		$outFile = Join-Path $outFolder "$name.html";
+	}
+
+	if ($outFile -eq $null) { continue; }
+	Write-Host " * found '$($file.Name)'";
+	Copy-Item $file.FullName -Destination $outFile -Force;
+
 	foreach ($link in ((Select-LinksThatPointsToFile $html.DocumentNode "//link[@data-inline='true']" "href") + (Select-LinksThatPointsToFile $html.DocumentNode "//script[@data-inline='true']" "src")))
 	{
 		if (-not [string]::IsNullOrEmpty($link.Path))
@@ -71,25 +81,25 @@ foreach ($file in (Get-ChildItem $wwwrootFolder -Filter "*.html"))
 			$link.HtmlNode.Attributes.Remove("data-inline");
 			switch ($link.HtmlNode.Name)
 			{
-				"link" 
+				"link"
 				{
 					switch (([IO.Path]::GetExtension($link.Path)))
 					{
-						".css" 
+						".css"
 						{
 							$link.HtmlNode.Attributes.Remove("href");
 							$link.HtmlNode.Name = "style";
 							$content = $html.CreateTextNode((Get-Content $link.Path | Out-String).Trim());
 							$link.HtmlNode.AppendChild($content) | Out-Null;
 						}
-						".ico" 
+						".ico"
 						{
 							$imageData = [Convert]::ToBase64String((Get-Content $link.Path -Encoding Byte));
-							$link.HtmlNode.SetAttributeValue("href", "data:image/x-icon;base64, $imageData");
+							$link.HtmlNode.SetAttributeValue("href", "data:image/x-icon;base64, $imageData") | Out-Null;
 						}
 					}
 				}
-				"script" 
+				"script"
 				{
 					$link.HtmlNode.Attributes.Remove("src");
 					$link.HtmlNode.RemoveAllChildren();

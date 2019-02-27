@@ -1,22 +1,23 @@
 ﻿{
-    "id":  null,
-    "name":  null,
-    "author":  null,
-    "company":  null,
-    "copyright":  null,
-    "website":  null,
-    "license":  null,
-    "repository":  null,
-    "icon":  null,
-    "tags":  null,
-    "releaseNotes":  null,
-    "version":  {
-                    "major":  0,
-                    "minor":  0,
-                    "patch":  1
-                },
-    "branchSuffixMap":  {
-                            "master":  "",
-                            "*":  "rc"
-                        }
+  "name": "VBench",
+  "author": "Ackara",
+  "company": "Ackara",
+  "copyright": "Copyright © Ackara 2019",
+  "website": "https://github.com/Ackara/VBench",
+  "license": "https://github.com/Ackara/license.txt",
+  "repository": "https://github.com/Ackara/VBench.git",
+  "releaseNotes": "https://github.com/Ackara/releaseNotes.txt",
+  "icon": null,
+  "tags": "BenchmarkDotNet exporter",
+  "version":
+  {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "branchSuffixMap":
+  {
+    "master": "rc",
+    "*": "rc"
+  }
 }

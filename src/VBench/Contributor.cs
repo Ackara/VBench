@@ -2,7 +2,7 @@
 
 namespace Acklann.VBench
 {
-    internal class Contribution
+    internal class Contributor
     {
         public DateTime Date { get; internal set; }
 
