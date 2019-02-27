@@ -12,21 +12,39 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Acklann.VBench
 {
+    
     public class VisualExporter : IExporter
     {
-        public VisualExporter()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VisualExporter"/> class.
+        /// </summary>
+        public VisualExporter() : this(false)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VisualExporter"/> class.
+        /// </summary>
+        /// <param name="captureGitEmail">if set to <c>true</c> [capture git email].</param>
+        public VisualExporter(bool captureGitEmail)
         {
             Name = $"{nameof(VBench)}";
+            _captureEmail = captureGitEmail;
             _name = $"{nameof(VBench).ToLowerInvariant()}";
             _unitsOfTime.Add("us", TimeUnit.Nanosecond); //For some reason TimeUnit don't have us registed as nanoseconds.
         }
 
-        internal const int TOTAL_INTERNAL_VALUES = 7;
-
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
+        /// <value>
+        /// The name.
+        /// </value>
         public string Name { get; }
 
         public void ExportToLog(Summary summary, ILogger logger)
@@ -36,7 +54,7 @@ namespace Acklann.VBench
         public IEnumerable<string> ExportToFiles(Summary summary, ILogger consoleLogger)
         {
             string databaseFilePath = Path.Combine(summary.ResultsDirectoryPath, $"{_name}.litedb");
-            CuratedDataset lastestBenchmark = UpdateDatabase(summary, databaseFilePath);
+            CuratedDataset lastestBenchmark = UpdateDatabase(summary, databaseFilePath, _captureEmail);
             IEnumerable<CuratedDataset> mergedData = ExportDatabase(databaseFilePath);
 
             Assembly assembly = typeof(VisualExporter).Assembly;
@@ -60,7 +78,7 @@ namespace Acklann.VBench
             return new string[] { databaseFilePath, reportFilePath };
         }
 
-        internal static CuratedDataset UpdateDatabase(Summary summary, string databaseFilePath)
+        internal static CuratedDataset UpdateDatabase(Summary summary, string databaseFilePath, bool captureEmail)
         {
             if (summary == null) throw new ArgumentNullException(nameof(summary));
             if (string.IsNullOrEmpty(databaseFilePath)) throw new ArgumentNullException(nameof(databaseFilePath));
@@ -71,8 +89,6 @@ namespace Acklann.VBench
 
                 var result = new CuratedDataset();
                 result.Name = store.Name;
-                result.Date = DateTime.UtcNow;
-                result.HostInformation = string.Join(Environment.NewLine, summary.HostEnvironmentInfo.ToFormattedString());
 
                 var columns = new List<CuratedDatasetColumn>();
                 foreach (var column in summary.Table.Columns.Where(x => x.NeedToShow))
@@ -87,7 +103,7 @@ namespace Acklann.VBench
                 }
                 result.Columns = columns.ToArray();
                 result.Rows = summary.Table.FullContent;
-                result.CommitInformation = GetRepositoryInfo(summary.ResultsDirectoryPath);
+                result.Contributions = new[] { FetchRepositoryInfo(summary, captureEmail) };
 
                 store.Insert(result);
                 return result;
@@ -140,6 +156,10 @@ namespace Acklann.VBench
                     result.Rows[rowIndex] = new object[curatedValues.Length];
                     curatedValues.CopyTo(result.Rows[rowIndex], 0);
                 }
+
+                result.Contributions = new Contribution[allTheTests.Length];
+                for (int i = 0; i < allTheTests.Length; i++)
+                    result.Contributions[i] = allTheTests[i].Contributions[0];
             }
 
             object[] getHistoricalData(IEnumerable<CuratedDataset> tests, string method, string columnName, int capacity)
@@ -181,8 +201,9 @@ namespace Acklann.VBench
             return result;
         }
 
-        internal static CommitInfo GetRepositoryInfo(string cwd)
+        internal static Contribution FetchRepositoryInfo(Summary summary, bool captureEmail)
         {
+            string cwd = summary?.ResultsDirectoryPath;
             if (string.IsNullOrEmpty(cwd)) throw new ArgumentNullException(nameof(cwd));
 
             try
@@ -193,27 +214,28 @@ namespace Acklann.VBench
                     if (lastCommit == null) return null;
                     else
                     {
-                        var newAndModifiedFiles = repo.RetrieveStatus()
-                            .Where(x =>
-                                x.State.HasFlag(FileStatus.NewInIndex) || x.State.HasFlag(FileStatus.NewInWorkdir) ||
-                                x.State.HasFlag(FileStatus.ModifiedInIndex) || x.State.HasFlag(FileStatus.ModifiedInWorkdir) ||
-                                x.State.HasFlag(FileStatus.RenamedInIndex) || x.State.HasFlag(FileStatus.RenamedInWorkdir));
+                        var newAndModifiedFiles = repo.RetrieveStatus().Where(x =>
+                            x.State.HasFlag(FileStatus.NewInIndex) || x.State.HasFlag(FileStatus.NewInWorkdir) ||
+                            x.State.HasFlag(FileStatus.ModifiedInIndex) || x.State.HasFlag(FileStatus.ModifiedInWorkdir) ||
+                            x.State.HasFlag(FileStatus.RenamedInIndex) || x.State.HasFlag(FileStatus.RenamedInWorkdir));
 
-                        return new CommitInfo
+                        string email = (captureEmail ? lastCommit.Committer.Email : null);
+                        return new Contribution
                         {
+                            HardwareInformation = string.Join(Environment.NewLine, summary.HostEnvironmentInfo.ToFormattedString()),
                             Branch = repo.Branches.First(x => x.IsCurrentRepositoryHead && !x.IsRemote).FriendlyName,
                             WasClean = (newAndModifiedFiles.Count() == 0),
+                            CommitMessage = lastCommit.MessageShort,
                             Date = lastCommit.Committer.When.Date,
                             Author = lastCommit.Committer.Name,
-                            Email = lastCommit.Committer.Email,
-                            Message = lastCommit.Message,
-                            Sha = lastCommit.Sha
+                            Sha = lastCommit.Sha,
+                            EmailMD5 = Hash(email),
+                            Email = email,
                         };
                     }
                 }
             }
             catch (Exception ex) { Console.WriteLine($"  Could not obtain Git information. {ex.Message}"); }
-
             return null;
         }
 
@@ -226,6 +248,16 @@ namespace Acklann.VBench
             return summary.Title.Replace(".", "_");
         }
 
+        internal static string Hash(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+
+            using (var md5 = System.Security.Cryptography.MD5.Create())
+            {
+                return BitConverter.ToString(md5.ComputeHash(Encoding.UTF8.GetBytes(text)));
+            }
+        }
+
         #region Private Members
 
         private const int method_column_index = 0;
@@ -234,6 +266,7 @@ namespace Acklann.VBench
         private static readonly IDictionary<string, SizeUnit> _unitsOfSize = SizeUnit.All.ToDictionary(x => x.Name);
 
         private readonly string _name;
+        private readonly bool _captureEmail;
 
         private static object TryConvertBackTo(TimeUnit unit, object value)
         {

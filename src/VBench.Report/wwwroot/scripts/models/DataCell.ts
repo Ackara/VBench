@@ -10,10 +10,8 @@ namespace VBench {
         constructor(parent: DataRow, columnIndex: number, model: any) {
             this.row = parent;
             this.columnIndex = columnIndex;
-            this.comparison = ko.observable(ComparisonMethod.previous);
 
             this.value = ko.observable();
-            this.units = ko.observable("");
             this.difference = ko.observable();
             this.isNumeric = ko.observable(false);
             this.isSelected = ko.observable(false);
@@ -21,6 +19,7 @@ namespace VBench {
             this.computeDifference();
         }
 
+        public static comparisonKind: ComparisonMethod = ComparisonMethod.previous;
         public static readonly TypeCode: number = 3;
         public readonly typeId = DataCell.TypeCode;
         public readonly row: DataRow;
@@ -30,9 +29,7 @@ namespace VBench {
         public history: Array<any>;
 
         public value: KnockoutObservable<any>;
-        public units: KnockoutObservable<string>;
         public difference: KnockoutObservable<any>;
-        public comparison: KnockoutObservable<ComparisonMethod>;
 
         public isNumeric: KnockoutObservable<boolean>;
         public isSelected: KnockoutObservable<boolean>;
@@ -43,8 +40,8 @@ namespace VBench {
             this.unitKind = column.unitKind;
 
             if (column.isNumeric && Array.isArray(model)) {
-                this.isNumeric(true);
                 let array: Array<any> = this.history = model;
+                this.isNumeric(array.length > 2);
 
                 switch (column.unitKind) {
                     default:
@@ -91,14 +88,14 @@ namespace VBench {
 
         public computeDifference(): void {
             let values: Array<number> = this.getDataPoints();
-            if (values.length === 0) { return null; }
+            if (values.length === 0) return;
 
             let current: number, other: number;
             current = values[values.length - 1];
 
             if (current === null || current === undefined) { return; }
 
-            switch (this.comparison()) {
+            switch (DataCell.comparisonKind) {
                 case ComparisonMethod.previous:
                     other = (values.length >= 2 ? values[values.length - 2] : current);
                     break;
@@ -121,14 +118,15 @@ namespace VBench {
             if (other === null || other === undefined) { return; }
 
             let sign = (current >= other ? "+" : "-");
-            let difference = Math.abs(other - current);
+            let difference = Math.abs(current - other);
             let percentile: any = ((difference / (other === 0 ? 1 : other)) * 100);
 
-            let output = `[${sign}${Formatter.format(difference, this.unitKind)}`;
-            if (percentile <= 100) output += ` (${(percentile >= 1 ? percentile.toFixed(0) : percentile.toFixed(2))}%)`;
-            else output += ` (>100%)`;
+            let output = `&Delta; ${sign}${Formatter.format(difference, this.unitKind)}`;
+            if (percentile === 0) { }
+            else if (percentile > 999) output += ` (>999%)`;
+            else output += ` (${(percentile >= 1 ? percentile.toFixed(0) : percentile.toFixed(2))}%)`;
 
-            this.difference(output + ']');
+            this.difference(output);
         }
     }
 }

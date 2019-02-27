@@ -1,5 +1,5 @@
 ﻿/// <reference path="../../../node_modules/@types/knockout/index.d.ts" />
-/// <reference path="../components/ChartEditor.ts" />
+/// <reference path="../components/Timeline.ts" />
 /// <reference path="../domain/Repository.ts" />
 /// <reference path="../models/DataRow.ts" />
 
@@ -11,12 +11,12 @@ namespace VBench {
             this.datasetTabs = ko.observableArray(datasetNames);
             this.selectedDataset = ko.observable(datasetNames[0]);
 
-            this.chartEditor = new ChartEditor(this._repository);
-            this.chartEditor.changeDataset(datasetNames[0]);
+            this.timeline = new Timeline(this._repository);
+            this.timeline.changeDataset(datasetNames[0]);
         }
 
         private readonly _repository: Repository;
-        public readonly chartEditor: ChartEditor;
+        public readonly timeline: Timeline;
 
         public selectedDataset: KnockoutObservable<string>;
         public datasetTabs: KnockoutObservableArray<string>;
@@ -29,7 +29,7 @@ namespace VBench {
                     let cell: DataCell = context.$data;
                     if (cell.isNumeric()) {
                         cell.isSelected(!cell.isSelected());
-                        me.chartEditor.updateChart(cell);
+                        me.timeline.updateChart(cell);
                     }
                 }
             });
@@ -37,7 +37,7 @@ namespace VBench {
             let btn = document.getElementById("chart-lines-btn");
             if (btn) {
                 btn.addEventListener("click", function (e) {
-                    let on = me.chartEditor.toggleChartLines();
+                    let on = me.timeline.toggleChartLines();
                     let value = btn.getElementsByClassName("chart-lines-btn-value")[0];
                     value.innerHTML = (on ? "on" : "off");
                 });
@@ -46,10 +46,8 @@ namespace VBench {
             let menu = <HTMLSelectElement>document.getElementById("compute-menu");
             if (menu) {
                 menu.addEventListener("click", function (e) {
-                    if (Repository.comparisonKind != menu.selectedIndex) {
-                        Repository.comparisonKind = menu.selectedIndex;
-                        me.chartEditor.changeDataset();
-                    }
+                    DataCell.comparisonKind = menu.selectedIndex;
+                    me.timeline.data.refresh();
                 }, { passive: true });
             }
 
@@ -62,20 +60,11 @@ namespace VBench {
 
                     let context = ko.contextFor(this);
                     (<HTMLElement>this).classList.add("is-active");
-                    me.chartEditor.changeDataset(context.$data);
+                    me.timeline.changeDataset(context.$data);
                     me.selectedDataset(context.$data);
                 });
             }
             tabs[0].classList.add("is-active");
-
-            let infoBtn = document.getElementById("info-btn");
-            if (infoBtn) {
-                infoBtn.addEventListener("click", function (e) {
-                    infoBtn.classList.toggle("is-active");
-                    let info = document.getElementById("system-info");
-                    if (info) { info.classList.toggle("is-active"); }
-                });
-            }
         }
     }
 }

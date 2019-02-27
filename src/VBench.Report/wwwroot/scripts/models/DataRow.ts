@@ -33,5 +33,11 @@ namespace VBench {
 
         public isSelected: KnockoutObservable<boolean>;
         public values: KnockoutObservableArray<DataCell>;
+
+        public refresh(): void {
+            for (let i = 0; i < this.values().length; i++) {
+                this.values()[i].computeDifference();
+            }
+        }
     }
 }

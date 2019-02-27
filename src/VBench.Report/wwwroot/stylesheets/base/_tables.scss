@@ -28,10 +28,6 @@ th, td {
     padding: $cell-padding;
 }
 
-td {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
 .cell {
     padding: 0;
 
@@ -58,13 +54,15 @@ td {
             opacity: 1;
         }
 
-        .cell-value.computed{
-            color: lighten($accent-color-1, 30);
-        }
+            .cell-value.computed {
+                color: lighten($accent-color-1, 30);
+            }
     }
 }
 
 .cell-value {
+    font-family: $number-font;
+
     transition: {
         duration: 250ms;
         property: opacity;

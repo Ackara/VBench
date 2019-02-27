@@ -5,28 +5,37 @@
 /// <reference path="../domain/Formatter.ts" />
 /// <reference path="../models/DataTable.ts" />
 /// <reference path="../models/DataCell.ts" />
+/// <reference path="../models/Contributor.ts" />
 
 namespace VBench {
-    export class ChartEditor {
+    export class Timeline {
         constructor(data: Repository) {
+            let me = this;
             this._repository = data;
             this._linesEnabled = true;
-            this.options = new DataTable();
+            this.data = new DataTable();
             this._colorPicker = new ColorGenerator();
             this._chart = this.createLineChart();
+
+            this.contributors = ko.observableArray();
+            this.selectedContributor = new Contributor();
         }
 
         private readonly _chart: Chart;
         private readonly _repository: Repository;
         private readonly _colorPicker: ColorGenerator;
-
-        public options: DataTable;
-        private _linesEnabled: boolean;
         private _selectedDatasetId: string;
+        private _linesEnabled: boolean;
+
+        public data: DataTable;
+        public selectedContributor: Contributor;
+        public contributors: KnockoutObservableArray<Contributor>;
+        public selectedContributorIndex: KnockoutObservable<number>;
 
         public changeDataset(datasetId: string = null): void {
             this._selectedDatasetId = (datasetId ? datasetId : this._selectedDatasetId);
-            this._repository.fetchLastestBenchmark(this._selectedDatasetId, this.options);
+            this._repository.loadData(this._selectedDatasetId, this.data, this.contributors);
+            this.selectContributor(0);
 
             this._chart.data.labels.splice(0, this._chart.data.labels.length);
             while (this._chart.data.datasets.length > 0) {
@@ -77,6 +86,15 @@ namespace VBench {
             this._chart.update();
         }
 
+        public selectContributor(index: number): Contributor {
+            let item: Contributor = null;
+            if (index < this.contributors().length) {
+                item = this.selectedContributor.copy(this.contributors()[index]);
+                item.testNo(index);
+            }
+            return item;
+        }
+
         public toggleChartLines(): boolean {
             this._linesEnabled = !this._linesEnabled;
             let config = this.createSeriesBaseSettings();
@@ -92,8 +110,9 @@ namespace VBench {
         }
 
         private createLineChart(): Chart {
+            let me = this;
             let labelColor = this._colorPicker.textColor;
-            let gridLineColor = this._colorPicker.textColor.getValue(0.1);
+            let gridLineColor = this._colorPicker.textColor;
             return new Chart(<HTMLCanvasElement>document.getElementById("chart"), {
                 type: 'line',
                 data: { datasets: [] },
@@ -101,7 +120,7 @@ namespace VBench {
                     scales: {
                         xAxes: [{
                             gridLines: {
-                                color: gridLineColor
+                                color: gridLineColor.getValue(0.25)
                             },
                             ticks: {
                                 fontColor: labelColor.getValue(0.75)
@@ -109,10 +128,12 @@ namespace VBench {
                         }],
                         yAxes: [{
                             gridLines: {
-                                color: gridLineColor
+                                display: true,
+                                color: gridLineColor.getValue(0.01)
                             },
                             ticks: {
-                                display: true,
+                                display: false,
+                                beginAtZero: true,
                                 fontColor: labelColor.getValue(0.5)
                             }
                         }]
@@ -121,8 +142,12 @@ namespace VBench {
                         titleFontSize: 18,
                         bodyFontSize: 18,
                         bodyFontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                        cornerRadius: 0,
+                        xPadding: 12,
+                        yPadding: 12,
                         callbacks: {
                             label: (item, data) => {
+                                me.selectContributor(item.index);
                                 let set = data.datasets[item.datasetIndex];
                                 return ` ${set.label}: ${Formatter.format(<number>set.data[item.index], (<any>set).vbench_unitType)}`;
                             }

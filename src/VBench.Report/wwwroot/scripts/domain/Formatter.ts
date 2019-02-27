@@ -3,25 +3,29 @@
 namespace VBench {
     export class Formatter {
         public static formatAsTime(nanoseconds: number): string {
-            var symbols = ["ns", "us", "ms", "s"];
+            if (nanoseconds === 0) return "0 ns";
+
+            var dimensions = ["ns", "us", "ms", "s"];
             let index = Math.floor(Formatter.log(1000, nanoseconds));
             nanoseconds = (nanoseconds / Math.pow(Math.pow(10, index), 3));
-            let unit = symbols[index];
+            let unit = dimensions[index];
 
-            if (index >= symbols.length && nanoseconds > 59 /* seconds */) {
+            if (index >= dimensions.length && nanoseconds > 59.999999 /* seconds */) {
                 nanoseconds = (nanoseconds / 60);
                 unit = "min";
             }
 
-            return `${(nanoseconds % 1) < 0.001 ? nanoseconds.toFixed(0) : nanoseconds.toFixed(3)} ${unit}`;
+            return `${this.formatAsNumber(nanoseconds)} ${unit}`;
         }
 
         public static formatAsBytes(bytes: number): string {
-            var symbols = ["B", "KB", "MB", "GB", "TB"];
+            if (bytes === 0) return "0 B";
+
+            var dimensions = ["B", "KB", "MB", "GB", "TB"];
             let index = Math.floor(Formatter.log(1024, bytes));
             bytes = (bytes / Math.pow(1024, index));
 
-            return `${bytes} ${symbols[index]}`;
+            return `${this.formatAsNumber(bytes)} ${dimensions[index]}`;
         }
 
         public static formatAsNumber(value: number): string {

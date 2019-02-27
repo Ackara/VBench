@@ -1,41 +1,63 @@
 ﻿@import "../modules/_theme.scss";
+@import "../modules//_mixins.scss";
+
+.dataset-title {
+    margin-bottom: 0.15em;
+}
+
+.dataset-desc {
+    font-size: small;
+    color: $subtle-text-color;
+}
+
+.links {
+    $link-size: 1.5em;
+
+    a {
+        opacity: 0.5;
+        padding: 0.5em 0;
+        fill: $text-color;
+        color: $text-color;
+        height: $link-size;
+        font-size: $link-size;
+        text-decoration: none;
+        transition: opacity ease-in 250ms;
+
+        &:visited {
+            color: $text-color;
+            text-decoration: none;
+        }
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+        a:nth-child(odd) {
+            padding: {
+                left: 1em;
+                right: 1em;
+            }
+        }
+
+    svg {
+        width: 1em;
+        height: 1em;
+        fill: inherit;
+    }
+
+    i {
+        font-size: inherit;
+    }
+}
 
 .command-bar > *:nth-child(even) {
     padding: 0 1em;
 }
 
 select {
+    outline: none;
     cursor: pointer;
     border: 1px solid transparent;
     background-color: $background-color;
-}
-
-#info-btn {
-    opacity: 0.25;
-    transition: opacity ease 250ms;
-
-    &:hover, &.is-active {
-        opacity: 1;
-    }
-}
-
-#system-info {
-    opacity: 0;
-    white-space: pre;
-    position: absolute;
-    line-height: 1.25em;
-    visibility: collapse;
-    transform: translateY(2em);
-    background-color: $background-color;
-
-    transition: {
-        duration: 500ms;
-        property: transform, opacity;
-    }
-
-    &.is-active {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(-1em);
-    }
 }

@@ -22,12 +22,15 @@
     <MetroStudioIconStylesheet Include="..\..\art\export\vbench\Embed Font in CSS\style.css" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\media\" />
+  </ItemGroup>
+
   <Target Name="ImportGeneratedImages" BeforeTargets="CoreCompile">
     <Copy Condition="Exists('@(Favicon)')" SourceFiles="@(Favicon)" DestinationFolder="wwwroot\" SkipUnchangedFiles="true" />
 
     <Copy Condition="Exists('@(MetroStudioIconStylesheet)')" SourceFiles="@(MetroStudioIconStylesheet)" DestinationFiles="wwwroot\stylesheets\base\_icons.scss" SkipUnchangedFiles="true" />
 
-    <Warning Condition="!Exists('@(MetroStudioIconStylesheet)')" 
-             Text="Could not find metro-studio icons; try exporting time." />
+    <Warning Condition="!Exists('@(MetroStudioIconStylesheet)')" Text="Could not find metro-studio icons; try exporting time." />
   </Target>
 </Project>

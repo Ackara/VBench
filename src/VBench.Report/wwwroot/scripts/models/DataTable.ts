@@ -11,8 +11,6 @@ namespace VBench {
             this.description = ko.observable("");
         }
 
-        public totalTests: number;
-
         public name: KnockoutObservable<string>;
         public description: KnockoutObservable<string>;
 
@@ -29,6 +27,12 @@ namespace VBench {
             let newRow = new DataRow(this, model);
             this.rows.push(newRow);
             return newRow;
+        }
+
+        public refresh(): void {
+            for (let i = 0; i < this.rows().length; i++) {
+                this.rows()[i].refresh();
+            }
         }
 
         public clear(): void {

@@ -4,7 +4,7 @@ using System;
 
 namespace Acklann.VBench
 {
-    public class CuratedDatasetColumn : ICloneable
+    internal class CuratedDatasetColumn : ICloneable
     {
         public CuratedDatasetColumn()
         {
@@ -32,21 +32,6 @@ namespace Acklann.VBench
         public bool IsNumeric { get; set; }
 
         public UnitType UnitKind { get; set; }
-
-        internal static CuratedDatasetColumn[] GetInternalColumns()
-        {
-            int index = 0;
-            return new CuratedDatasetColumn[VisualExporter.TOTAL_INTERNAL_VALUES]
-            {
-                new CuratedDatasetColumn(index++, nameof(CuratedDataset.TestNo), UnitType.Dimensionless),
-                new CuratedDatasetColumn(index++, nameof(CuratedDataset.Date)),
-                new CuratedDatasetColumn(index++, nameof(CuratedDataset.HostInformation)),
-                new CuratedDatasetColumn(index++, nameof(CommitInfo.Author)),
-                new CuratedDatasetColumn(index++, nameof(CommitInfo.Email)),
-                new CuratedDatasetColumn(index++, nameof(CommitInfo.Sha)),
-                new CuratedDatasetColumn(index++, nameof(CommitInfo.WasClean))
-            };
-        }
 
         #region ICloneable
 

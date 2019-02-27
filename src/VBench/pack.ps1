@@ -69,24 +69,28 @@ foreach ($file in (Get-ChildItem $wwwrootFolder -Filter "*.html"))
 		if (-not [string]::IsNullOrEmpty($link.Path))
 		{
 			$link.HtmlNode.Attributes.Remove("data-inline");
-			switch($link.HtmlNode.Name)
+			switch ($link.HtmlNode.Name)
 			{
-				"link" {
-					if ($link.Path.EndsWith('.css'))
+				"link" 
+				{
+					switch (([IO.Path]::GetExtension($link.Path)))
 					{
-						$link.HtmlNode.Attributes.Remove("href");
-						$link.HtmlNode.Name = "style";
-						$content = $html.CreateTextNode((Get-Content $link.Path | Out-String).Trim());
-						$link.HtmlNode.AppendChild($content) | Out-Null;
-					}
-					else
-					{
-						$imageData = [Convert]::ToBase64String((Get-Content $link.Path -Encoding Byte));
-						$link.HtmlNode.SetAttributeValue("href", "data:image/x-icon;base64, $imageData");
+						".css" 
+						{
+							$link.HtmlNode.Attributes.Remove("href");
+							$link.HtmlNode.Name = "style";
+							$content = $html.CreateTextNode((Get-Content $link.Path | Out-String).Trim());
+							$link.HtmlNode.AppendChild($content) | Out-Null;
+						}
+						".ico" 
+						{
+							$imageData = [Convert]::ToBase64String((Get-Content $link.Path -Encoding Byte));
+							$link.HtmlNode.SetAttributeValue("href", "data:image/x-icon;base64, $imageData");
+						}
 					}
 				}
-
-				"script" {
+				"script" 
+				{
 					$link.HtmlNode.Attributes.Remove("src");
 					$link.HtmlNode.RemoveAllChildren();
 					$content = $html.CreateTextNode((Get-Content $link.Path | Out-String));

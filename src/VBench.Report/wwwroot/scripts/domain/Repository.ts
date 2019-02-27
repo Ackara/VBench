@@ -1,8 +1,8 @@
-﻿/// <reference path="../models/DataTable.ts" />
+﻿/// <reference path="../../../node_modules/@types/knockout/index.d.ts" />
 /// <reference path="../models/DataColumn.ts" />
+/// <reference path="../models/DataTable.ts" />
+/// <reference path="../models/Contributor.ts" />
 /// <reference path="../models/DataRow.ts" />
-/// <reference path="ComparisonMethod.ts" />
-/// <reference path="ColumnIndex.ts" />
 
 namespace VBench {
     export class Repository {
@@ -11,14 +11,15 @@ namespace VBench {
         }
 
         private readonly _data: Array<any>;
-        public static comparisonKind: ComparisonMethod = ComparisonMethod.previous;
 
-        public fetchLastestBenchmark(datasetId: string, out: DataTable = null): DataTable {
+        public loadData(datasetId: string, out: DataTable, hosts: KnockoutObservableArray<Contributor>): DataTable {
             let result = (out || new DataTable());
-
             let dataset = this.fetchDataset(datasetId);
-            result.name(datasetId);
+            let contributors: Array<any> = dataset.contributions;
+
             result.clear();
+            result.name(datasetId);
+            result.description(contributors[contributors.length - 1].hardwareInformation);
 
             let numberOfColumns = dataset.columns.length;
             for (let i = 0; i < numberOfColumns; i++) {
@@ -27,6 +28,11 @@ namespace VBench {
 
             for (let i = 0; i < dataset.rows.length; i++) {
                 result.addRow(dataset.rows[i]);
+            }
+
+            hosts.removeAll();
+            for (let i = 0; i < contributors.length; i++) {
+                hosts.push(Contributor.create(contributors[i]));
             }
 
             return result;

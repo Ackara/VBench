@@ -2,7 +2,7 @@
 
 namespace Acklann.VBench
 {
-    public class CommitInfo
+    internal class Contribution
     {
         public DateTime Date { get; internal set; }
 
@@ -12,10 +12,14 @@ namespace Acklann.VBench
 
         public string Sha { get; internal set; }
 
-        public string Message { get; set; }
+        public string CommitMessage { get; set; }
 
         public string Author { get; internal set; }
 
         public string Email { get; set; }
+
+        public string EmailMD5 { get; set; }
+
+        public string HardwareInformation { get; set; }
     }
 }
