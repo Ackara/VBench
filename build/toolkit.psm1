@@ -43,6 +43,38 @@ function CND
 	if ($Condition) { return $TrueValue; } else { return $FalseValue; }
 }
 
+function Convert-MixedXmlElementToText
+{
+	[OutputType([string])]
+	Param(
+		[Parameter(Mandatory)]
+		$XmlNode
+	)
+
+	if ($XmlNode.GetType() -eq [string]) { return $XmlNode.Trim(); }
+	else
+	{
+		$text = [System.Text.StringBuilder]::new();
+		foreach ($node in $XmlNode.ChildNodes)
+		{
+			if (($node.LocalName -eq "#text"))
+			{
+				$text.Append($node.InnerText) | Out-Null;
+			}
+			elseif ($node.HasAttributes)
+			{
+				foreach ($attr in $node.Attributes)
+				{
+					$text.Append($attr.Value) | Out-Null;
+				}
+			}
+		}
+		return $text.ToString().Trim();
+	}
+
+	return "";
+}
+
 function Expand-NugetPackage
 {
 	Param(
@@ -90,6 +122,8 @@ function Export-XmlSchemaFromDll
 		{
 			Write-Header "dotnet: publish '$($ProjectFile.BaseName)'";
 			Invoke-Tool { &dotnet publish $ProjectFile.FullName --configuration $Configuraiton; }
+			$dll = Join-Path $ProjectFile.DirectoryName "bin/$Configuraiton/**/publish/*$($ProjectFile.BaseName).dll" | Resolve-Path;
+			Write-Header;
 		}
 
 		try
@@ -112,6 +146,24 @@ function Export-XmlSchemaFromDll
 		}
 		finally { Pop-Location; }
 	}
+}
+
+function Get-MSBuildElement
+{
+	Param(
+		[Parameter(Mandatory)]
+		[ValidateScript({Test-Path $_})]
+		[string]$ProjectFile,
+
+		[Parameter(Mandatory)]
+		[string]$XPath
+	)
+
+	[xml]$proj = Get-Content $ProjectFile;
+	$ns = [System.Xml.XmlNamespaceManager]::new($proj.NameTable);
+	$ns.AddNamespace("x", "http://schemas.microsoft.com/developer/msbuild/2003");
+
+	return $proj.SelectSingleNode($XPath, $ns);
 }
 
 function Get-Secret
@@ -376,7 +428,7 @@ function Invoke-NugetPack
 	{
 		try
 		{
-			Write-Header "dotnet: pack '$($ProjectFile.BaseName)'";
+			Write-Header "dotnet: pack '$($ProjectFile.BaseName)' $Version";
 			Invoke-Tool { &dotnet pack $ProjectFile.FullName --output $ArtifactsFolder --configuration $Configuration /p:PackageVersion=$Version; }
 		}
 		finally { Pop-Location; }
@@ -436,6 +488,7 @@ function Merge-DllDocumentationWithXSD
 	)
 
 	[xml]$documentation = Resolve-Path $DllDocumentationFilePath | Get-Content;
+
 	[xml]$xsd = Get-Content $XmlSchemaFilePath;
 	$ns = [Xml.XmlNamespaceManager]::new($xsd.NameTable);
 	[string]$xmlns = "http://www.w3.org/2001/XMLSchema";
@@ -447,7 +500,7 @@ function Merge-DllDocumentationWithXSD
 		$match = $documentation.SelectNodes("//member") | Where-Object { $_.Attributes["name"].Value -match $pattern; } | Select-Object -First 1;
 		if ($match -ne $null)
 		{
-			Add-XsdAnnotation $xsd $type ($match.summary.Trim()) | Out-Null;
+			Add-XsdAnnotation $xsd $type (Convert-MixedXmlElementToText $match.summary) | Out-Null;
 			Write-Host "  * updated '$($type.name)' node documentation.";
 		}
 
@@ -457,7 +510,7 @@ function Merge-DllDocumentationWithXSD
 			$match = $documentation.SelectNodes("//member") | Where-Object { $_.Attributes["name"].Value -match $pattern; } | Select-Object -First 1;
 			if ($match -ne $null)
 			{
-				Add-XsdAnnotation $xsd $attribute ($match.summary.Trim()) | Out-Null;
+				Add-XsdAnnotation $xsd $attribute (Convert-MixedXmlElementToText $match.summary) | Out-Null;
 				Write-Host "    * updated '$($attribute.name)' attribute documentation.";
 			}
 		}
@@ -468,7 +521,7 @@ function Merge-DllDocumentationWithXSD
 			$match = $documentation.SelectNodes("//member") | Where-Object { $_.Attributes["name"].Value -match $pattern; } | Select-Object -First 1;
 			if ($match -ne $null)
 			{
-				Add-XsdAnnotation $xsd $element ($match.summary.Trim()) | Out-Null;
+				Add-XsdAnnotation $xsd $element (Convert-MixedXmlElementToText $match.summary) | Out-Null;
 				Write-Host "    * updated '$($element.name)' element documentation.";
 			}
 		}

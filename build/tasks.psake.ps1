@@ -98,7 +98,7 @@ Task "Run-Tests" -alias "test" -description "This task invoke all tests within t
 
 Task "Publish-NuGetPackages" -alias "push-nuget" -description "This task publish all nuget packages to nuget.org." `
 -precondition { return Test-Path $ArtifactsFolder -PathType Container } `
--action { Get-ChildItem $ArtifactsFolder -Recurse -Filter "*.nupkg" | Publish-NugetPackage $SecretsFilePath "nugetKey"; }
+-action { Get-ChildItem $ArtifactsFolder -Recurse -Filter "*.nupkg" | Publish-PackageToNuget $SecretsFilePath "nugetKey"; }
 
 Task "Add-GitReleaseTag" -alias "tag" -description "This task tags the last commit with the version number." `
 -depends @("restore") -action { $ManifestFilePath | ConvertTo-NcrementVersionNumber | Select-Object -ExpandProperty Version | New-GitTag $CurrentBranch; }
