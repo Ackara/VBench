@@ -1,15 +1,25 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Acklann.VBench</AssemblyName>
     <RootNamespace>Acklann.VBench</RootNamespace>
   </PropertyGroup>
-
+  <PropertyGroup>
+    <PackageVersion>1.0.1</PackageVersion>
+    <PackageTags>BenchmarkDotNet exporter</PackageTags>
+    <Title>VBench</Title>
+    <Company>Ackara</Company>
+    <PackageProjectUrl>https://github.com/Ackara/VBench</PackageProjectUrl>
+    <Description>A netstandard library that contains a BenchmarkDotNet.Exporter.IExporter that will enable you to track and compare, past and present benchmark reports via a nice visual html report.</Description>
+    <Copyright>Copyright © Ackara 2019</Copyright>
+    <Authors>Ackara</Authors>
+    <PackageLicenseUrl>https://github.com/Ackara/license.txt</PackageLicenseUrl>
+    <AssemblyVersion>1.0.1</AssemblyVersion>
+    <PackageReleaseNotes>https://github.com/Ackara/releaseNotes.txt</PackageReleaseNotes>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin\Release\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.11.4" />
     <PackageReference Include="HtmlAgilityPack" Version="1.9.0" />
@@ -17,19 +27,15 @@
     <PackageReference Include="LiteDB" Version="4.1.4" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="templates/*.html" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="templates\" />
   </ItemGroup>
-
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Update="Template.cs">
       <DesignTime>True</DesignTime>
@@ -37,14 +43,12 @@
       <DependentUpon>Template.tt</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <None Update="Template.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Template.cs</LastGenOutput>
     </None>
   </ItemGroup>
-
   <Target Name="CompileHtmlTemplates" BeforeTargets="PreBuildEvent">
     <Exec StandardOutputImportance="low" Command="powershell -ExecutionPolicy Bypass -NoProfile -NonInteractive -File pack.ps1" />
   </Target>
