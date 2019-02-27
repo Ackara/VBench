@@ -17,6 +17,10 @@ using System.Text.RegularExpressions;
 
 namespace Acklann.VBench
 {
+    /// <summary>
+    /// An exporter that saves your results.
+    /// </summary>
+    /// <seealso cref="BenchmarkDotNet.Exporters.IExporter" />
     public class TimelineExporter : IExporter
     {
         /// <summary>

@@ -33,5 +33,5 @@ namespace VBench.Sample
 
 When you run your benchmarks two new files (`vbench.html` and `vbench.litedb`) will be added to the `BenchmarkDotNet.Artifacts\results` folder. All past and present results will be stored in`vbench.litedb` while `vbench.html` will present it's contents. Check out the example below.
 
-[![timeline](art/screenshots/timeline.gif)](src/VBench/templates/Timeline.html)
+![timeline](art/screenshots/timeline.gif)]
 
