@@ -55,8 +55,8 @@ Task "Package-Solution" -alias "pack" -description "This task generates all depl
 
 Task "Clean" -description "This task removes all generated files and folders from the solution." `
 -action {
-	$SolutionFolder | Remove-GeneratedSolutionItems -AdditionalItems @();
-	Get-ChildItem $SolutionFolder -Recurse -File -Filter "*.*proj" | Remove-GeneratedProjectItems -AdditionalItems @();
+	$SolutionFolder | Remove-GeneratedProjectItem -AdditionalItems @();
+	Get-ChildItem $SolutionFolder -Recurse -File -Filter "*.*proj" | Remove-GeneratedProjectItem -AdditionalItems @();
 }
 
 Task "Install-BuildDependencies" -alias "restore" -description "This task imports all build dependencies." `
