@@ -6,7 +6,10 @@
     <RootNamespace>Acklann.VBench.Report</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
-    <PackageVersion>1.0.1</PackageVersion>
+    <PackageIconUrl>https://github.com/Ackara/VBench/raw/master/art/vbench.png</PackageIconUrl>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PackageVersion>1.0.2</PackageVersion>
     <PackageTags>BenchmarkDotNet exporter</PackageTags>
     <Title>VBench</Title>
     <Company>Ackara</Company>
@@ -15,7 +18,7 @@
     <Copyright>Copyright © Ackara 2019</Copyright>
     <Authors>Ackara</Authors>
     <PackageLicenseUrl>https://github.com/Ackara/license.txt</PackageLicenseUrl>
-    <AssemblyVersion>1.0.1</AssemblyVersion>
+    <AssemblyVersion>1.0.2</AssemblyVersion>
     <PackageReleaseNotes>https://github.com/Ackara/releaseNotes.txt</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
