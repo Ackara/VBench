@@ -1,22 +1,24 @@
 ﻿{
-    "name":  "VBench",
-    "description":  "A netstandard library that contains a BenchmarkDotNet.Exporter.IExporter that will enable you to track and compare, past and present benchmark reports via a nice visual html report.",
-    "author":  "Ackara",
-    "company":  "Ackara",
-    "copyright":  "Copyright © Ackara 2019",
-    "website":  "https://github.com/Ackara/VBench",
-    "license":  "https://github.com/Ackara/license.txt",
-    "repository":  "https://github.com/Ackara/VBench.git",
-    "releaseNotes":  "https://github.com/Ackara/releaseNotes.txt",
-    "icon":  "https://github.com/Ackara/VBench/raw/master/art/vbench.png",
-    "tags":  "BenchmarkDotNet exporter",
-    "version":  {
-                    "major":  1,
-                    "minor":  0,
-                    "patch":  4
-                },
-    "branchSuffixMap":  {
-                            "master":  "rc",
-                            "*":  "rc"
-                        }
+  "name": "VBench",
+  "description": "A netstandard library that contains a BenchmarkDotNet.Exporter.IExporter that will enable you to track and compare, past and present benchmark reports via a nice visual html report.",
+  "author": "Ackara",
+  "company": "Ackara",
+  "copyright": "Copyright © Ackara 2019",
+  "website": "https://github.com/Ackara/VBench",
+  "license": "https://github.com/Ackara/VBench/license.txt",
+  "repository": "https://github.com/Ackara/VBench.git",
+  "releaseNotes": "https://github.com/Ackara/VBench/releaseNotes.txt",
+  "icon": "https://github.com/Ackara/VBench/raw/master/art/vbench.png",
+  "tags": "BenchmarkDotNet exporter",
+  "version":
+  {
+    "major": 1,
+    "minor": 0,
+    "patch": 4
+  },
+  "branchSuffixMap":
+  {
+    "master": "rc",
+    "*": "rc"
+  }
 }

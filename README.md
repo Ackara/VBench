@@ -1,9 +1,9 @@
 # VBench
 
-![Nuget](https://img.shields.io/nuget/v/Acklann.VBench.svg)
+[![Nuget](https://img.shields.io/nuget/v/Acklann.VBench.svg)](https://www.nuget.org/packages/Acklann.VBench/)
 
 ## The Problem
-You are using [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet) to measure your project's prerformance. In addition, you also want to keep track of the project's performance over time however, [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet) do not have an exporter/report to track said changes.
+You are using [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet) to measure your project's performance. In addition, you also want to keep track of the project's performance over time however, [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet) do not have an exporter/report to track said changes.
 
 ## The Solution
 **VBench** is a netstandard library that contains a `BenchmarkDotNet.Exporter.IExporter` that will enable you to track and compare, past and present benchmark reports via a nice visual html report.
@@ -33,5 +33,5 @@ namespace VBench.Sample
 
 When you run your benchmarks two new files (`vbench.html` and `vbench.litedb`) will be added to the `BenchmarkDotNet.Artifacts\results` folder. All past and present results will be stored in`vbench.litedb` while `vbench.html` will present it's contents. Check out the example below.
 
-![timeline](art/screenshots/timeline.gif)]
+![timeline](art/screenshots/timeline.gif)
 
