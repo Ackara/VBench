@@ -3,7 +3,7 @@
 namespace VBench {
     export class Formatter {
         public static formatAsTime(nanoseconds: number): string {
-            if (nanoseconds === 0) return "0 ns";
+            if (nanoseconds <= 1) return `${nanoseconds} ns`;
 
             var dimensions = ["ns", "us", "ms", "s"];
             let index = Math.floor(Formatter.log(1000, nanoseconds));
@@ -19,7 +19,7 @@ namespace VBench {
         }
 
         public static formatAsBytes(bytes: number): string {
-            if (bytes === 0) return "0 B";
+            if (bytes <= 1) return `${bytes} B`;
 
             var dimensions = ["B", "KB", "MB", "GB", "TB"];
             let index = Math.floor(Formatter.log(1024, bytes));

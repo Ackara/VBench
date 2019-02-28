@@ -4,73 +4,79 @@ thead {
     tr:last-child {
         background-color: invert($alt-background-color, 15);
     }
+
+    th {
+        border-left-width: 2px;
+        border-right-width: 2px;
+    }
 }
 
-tr:hover .cell {
-    &.is-numeric {
-        cursor: pointer;
-    }
+tbody tr {
+    border-top: 2px solid;
+    border-color: transparent;
+    transition: border-color ease-in 250ms;
+}
 
-    & > * {
+    tbody tr:hover {
         border-top-color: $accent-color-1;
-        border-bottom-color: $accent-color-1;
+
+        & + tr {
+            border-top-color: $accent-color-1;
+        }
+
+        .computed {
+            opacity: 1;
+        }
     }
 
-    .cell-value {
-        opacity: 1;
-    }
-}
+    tbody tr:last-child {
+        border-bottom: 2px solid transparent;
 
-$cell-padding: 0.5em;
+        &:hover {
+            border-color: $accent-color-1;
+        }
+    }
 
 th, td {
     text-align: left;
-    padding: $cell-padding;
+    padding: 0.5em 0.25em;
+    border-left: 2px solid transparent;
+    transition: border-color ease-in 250ms;
 }
 
-.cell {
-    padding: 0;
+    td:last-child {
+        border-right: 2px solid transparent;
 
-    & > * {
-        padding: $cell-padding;
-        border: 2px solid transparent;
-
-        transition: {
-            duration: 250ms;
-            property: border-color;
-            timing-function: linear;
+        &.is-active {
+            border-color: $accent-color-1;
         }
     }
 
-    &.is-active {
+    td.is-numeric {
+        cursor: pointer;
+    }
+
+    td.is-active {
         background-color: $accent-color-2;
+        border-color: $accent-color-1;
+        transition: background-color ease-in 250ms;
 
-        & > * {
-            border-left-color: $accent-color-1;
-            border-right-color: $accent-color-1;
+        & + td {
+            border-color: $accent-color-1;
         }
 
-        .cell-value {
+        .computed {
             opacity: 1;
+            color: lighten($accent-color-1, 30);
         }
-
-            .cell-value.computed {
-                color: lighten($accent-color-1, 30);
-            }
     }
-}
 
 .cell-value {
     font-family: $number-font;
+}
 
-    transition: {
-        duration: 250ms;
-        property: opacity;
-        timing-function: ease-in;
-    }
-
-    &.computed {
-        opacity: 0;
-        color: $subtle-text-color;
-    }
+.computed {
+    opacity: 0;
+    color: $subtle-text-color;
+    transition: opacity ease-in 250ms;
 }

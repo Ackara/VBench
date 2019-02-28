@@ -294,22 +294,21 @@ namespace Acklann.VBench
                     value: TimeUnit.Convert(Convert.ToDouble(match.Groups["value"].Value.Replace(",", "")), original, unit),
                     friendlyValue: match.Value.Trim());
             }
-            else return value;
+            else return null;
         }
 
         private static object TryConvertBackTo(SizeUnit unit, object value)
         {
             if (value == null) return value;
-
             Match match = _unitPattern.Match(value.ToString());
             if (match.Success)
             {
                 SizeUnit original = _unitsOfSize[match.Groups["unit"].Value];
                 return new ScaledValue(
-                    value: SizeUnit.Convert(Convert.ToInt64(match.Groups["value"].Value.Replace(",", "")), original, unit),
+                    value: (Convert.ToDouble(match.Groups["value"].Value.Replace(",", "")) * original.ByteAmount),
                     friendlyValue: match.Value.Trim());
             }
-            else return value;
+            else return null;
         }
 
         private static IEnumerable<object> NormalizeTimeUnits(IList<object> values)

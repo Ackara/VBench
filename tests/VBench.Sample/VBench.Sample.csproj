@@ -14,4 +14,10 @@
     <ProjectReference Include="..\..\src\VBench\VBench.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="fileList.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
