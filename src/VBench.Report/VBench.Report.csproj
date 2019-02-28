@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
@@ -37,9 +37,14 @@
   <ItemGroup>
     <Folder Include="wwwroot\media\" />
   </ItemGroup>
-  <Target Name="ImportGeneratedImages" BeforeTargets="CoreCompile">
+  <Target Name="ImportGeneratedImages" BeforeTargets="PreBuildEvent">
     <Copy Condition="Exists('@(Favicon)')" SourceFiles="@(Favicon)" DestinationFolder="wwwroot\" SkipUnchangedFiles="true" />
     <Copy Condition="Exists('@(MetroStudioIconStylesheet)')" SourceFiles="@(MetroStudioIconStylesheet)" DestinationFiles="wwwroot\stylesheets\base\_icons.scss" SkipUnchangedFiles="true" />
     <Warning Condition="!Exists('@(MetroStudioIconStylesheet)')" Text="Could not find metro-studio icons; try exporting time." />
+  </Target>
+  <Target Name="ImportNodeModules"
+          BeforeTargets="PreBuildEvent"
+          Condition="!Exists('node_modules')">
+    <Exec Command="npm install" />
   </Target>
 </Project>

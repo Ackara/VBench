@@ -17,6 +17,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VBench.Report", "src\VBench.Report\VBench.Report.csproj", "{4F20B493-4A7D-4C58-9A3D-F608694BB006}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VBench", "src\VBench\VBench.csproj", "{16D1FFA0-00DF-4DC5-91BB-CB690607A56F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4F20B493-4A7D-4C58-9A3D-F608694BB006} = {4F20B493-4A7D-4C58-9A3D-F608694BB006}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VBench.Sample", "tests\VBench.Sample\VBench.Sample.csproj", "{40A2AA10-4995-43A8-B58A-C8AE1738CEA1}"
 EndProject
