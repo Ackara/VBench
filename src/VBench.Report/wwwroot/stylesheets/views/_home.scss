@@ -61,3 +61,10 @@ select {
     border: 1px solid transparent;
     background-color: $background-color;
 }
+
+/* IE 10+ */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    #chart {
+        height: 25% !important;
+    }
+}
