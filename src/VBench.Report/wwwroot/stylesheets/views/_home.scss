@@ -1,6 +1,10 @@
 ﻿@import "../modules/_theme.scss";
 @import "../modules//_mixins.scss";
 
+main section {
+    padding: 0 2px;
+}
+
 .dataset-title {
     margin-bottom: 0.15em;
 }

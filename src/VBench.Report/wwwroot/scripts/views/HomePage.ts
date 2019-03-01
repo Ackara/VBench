@@ -31,6 +31,7 @@ namespace VBench {
                         cell.isSelected(!cell.isSelected());
                         me.timeline.updateChart(cell);
                     }
+                    console.debug(`${cell.unitKind}: ${cell.isNumeric()}`);
                 }
             });
 

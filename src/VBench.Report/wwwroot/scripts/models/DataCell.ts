@@ -41,8 +41,8 @@ namespace VBench {
 
             if (column.isNumeric && Array.isArray(model)) {
                 let array: Array<any> = this.history = model;
-                this.isNumeric(array.length > 2);
-
+                this.isNumeric(array.length >= 2);
+                
                 switch (column.unitKind) {
                     default:
                         this.value(array[array.length - 1]);
@@ -82,7 +82,7 @@ namespace VBench {
                     }
                     break;
             }
-
+            
             return points;
         }
 
