@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
@@ -9,7 +9,7 @@
     <PackageIconUrl>https://github.com/Ackara/VBench/raw/master/art/vbench.png</PackageIconUrl>
   </PropertyGroup>
   <PropertyGroup>
-    <PackageVersion>1.0.5</PackageVersion>
+    <PackageVersion>1.0.6</PackageVersion>
     <PackageTags>BenchmarkDotNet exporter</PackageTags>
     <Title>VBench</Title>
     <Company>Ackara</Company>
@@ -18,7 +18,7 @@
     <Copyright>Copyright © Ackara 2019</Copyright>
     <Authors>Ackara</Authors>
     <PackageLicenseUrl>https://github.com/Ackara/VBench/license.txt</PackageLicenseUrl>
-    <AssemblyVersion>1.0.5</AssemblyVersion>
+    <AssemblyVersion>1.0.6</AssemblyVersion>
     <PackageReleaseNotes>https://github.com/Ackara/VBench/releaseNotes.txt</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
@@ -42,9 +42,7 @@
     <Copy Condition="Exists('@(MetroStudioIconStylesheet)')" SourceFiles="@(MetroStudioIconStylesheet)" DestinationFiles="wwwroot\stylesheets\base\_icons.scss" SkipUnchangedFiles="true" />
     <Warning Condition="!Exists('@(MetroStudioIconStylesheet)')" Text="Could not find metro-studio icons; try exporting time." />
   </Target>
-  <Target Name="ImportNodeModules"
-          BeforeTargets="PreBuildEvent"
-          Condition="!Exists('node_modules')">
+  <Target Name="ImportNodeModules" BeforeTargets="PreBuildEvent" Condition="!Exists('node_modules')">
     <Exec Command="npm install" />
   </Target>
 </Project>
