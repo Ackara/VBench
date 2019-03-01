@@ -9,7 +9,7 @@
     <PackageIconUrl>https://github.com/Ackara/VBench/raw/master/art/vbench.png</PackageIconUrl>
   </PropertyGroup>
   <PropertyGroup>
-    <PackageVersion>1.0.7</PackageVersion>
+    <PackageVersion>1.0.8</PackageVersion>
     <PackageTags>BenchmarkDotNet exporter</PackageTags>
     <Title>VBench</Title>
     <Company>Ackara</Company>
@@ -18,7 +18,7 @@
     <Copyright>Copyright © Ackara 2019</Copyright>
     <Authors>Ackara</Authors>
     <PackageLicenseUrl>https://github.com/Ackara/VBench/license.txt</PackageLicenseUrl>
-    <AssemblyVersion>1.0.7</AssemblyVersion>
+    <AssemblyVersion>1.0.8</AssemblyVersion>
     <PackageReleaseNotes>https://github.com/Ackara/VBench/releaseNotes.txt</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
