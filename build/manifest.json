@@ -11,7 +11,7 @@
     "icon":  "https://github.com/Ackara/VBench/raw/master/art/vbench.png",
     "tags":  "BenchmarkDotNet exporter",
     "version":  {
-                    "major":  1,
+                    "major":  0,
                     "minor":  0,
                     "patch":  8
                 },
