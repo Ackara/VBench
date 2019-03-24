@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>Acklann.VBench</AssemblyName>
+    <AssemblyName>VBench</AssemblyName>
     <RootNamespace>Acklann.VBench</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>

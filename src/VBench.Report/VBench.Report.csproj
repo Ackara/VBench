@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
-    <AssemblyName>Acklann.VBench.Report</AssemblyName>
+    <AssemblyName>VBench.Report</AssemblyName>
     <RootNamespace>Acklann.VBench.Report</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
