@@ -5,7 +5,6 @@
 /// <reference path="DataColumn.ts" />
 /// <reference path="DataRow.ts" />
 
-
 namespace VBench {
     export class DataCell {
         constructor(parent: DataRow, columnIndex: number, model: any) {
@@ -17,11 +16,6 @@ namespace VBench {
             this.isNumeric = ko.observable(false);
             this.isSelected = ko.observable(false);
             this.isHidden = ko.observable(parent.table.columns()[columnIndex].isHidden());
-
-            if (window.localStorage) {
-                let key = `cell${parent.index}${columnIndex}`;
-                let value = window.localStorage.getItem(key);
-            }
 
             this.computeValue(model, parent.table.columns()[columnIndex]);
             this.computeDifference();

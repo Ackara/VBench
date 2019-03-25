@@ -46,6 +46,7 @@ namespace VBench {
         }
 
         public changeDataset(datasetId: string = null): void {
+            //console.debug(`switching to ${datasetId} dataset.`);
             this._selectedDatasetId = (datasetId ? datasetId : this._selectedDatasetId);
             this._repository.loadData(this._selectedDatasetId, this.data, this.contributors);
             this.selectContributor(0);

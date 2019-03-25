@@ -9,11 +9,12 @@ namespace VBench {
             this._repository = new Repository();
             let datasetNames: Array<string> = this._repository.fetchDatasetNames();
             this.datasetTabs = ko.observableArray(datasetNames);
-            this.selectedDataset = ko.observable(datasetNames[0]);
+            this.selectedDataset = ko.observable(Service.getMostRecentDataset() || datasetNames[0]);
+            this.selectedDataset.subscribe(function (newValue) { Service.saveMostRecentDataset(newValue); })
 
             DataCell.comparisonKind = Service.getDeltaComparison();
             this.timeline = new Timeline(this._repository);
-            this.timeline.changeDataset(datasetNames[0]);
+            this.timeline.changeDataset(this.selectedDataset());
             this.timeline.restore();
         }
 
@@ -23,8 +24,38 @@ namespace VBench {
         public selectedDataset: KnockoutObservable<string>;
         public datasetTabs: KnockoutObservableArray<string>;
 
-        public attachEventHandlers(): void {
+        public attachEventHandlers(firstTime: boolean = false): void {
             let me = this;
+
+            if (firstTime) {
+                let menu = <HTMLSelectElement>document.getElementById("compute-menu");
+                if (menu) {
+                    menu.selectedIndex = DataCell.comparisonKind;
+                    menu.addEventListener("click", function (e) {
+                        DataCell.comparisonKind = menu.selectedIndex;
+                        Service.saveComparisonKey(DataCell.comparisonKind);
+                        me.timeline.data.refresh();
+                    }, { passive: true });
+                }
+
+                let btn = document.getElementById("chart-lines-btn");
+                if (btn) {
+                    btn.addEventListener("click", function (e) {
+                        me.timeline.toggleChartLines();
+                    });
+                }
+
+                let tabs = document.getElementsByClassName("tab-btn");
+                for (let i = 0; i < tabs.length; i++) {
+                    tabs[i].addEventListener("click", function (e) {
+                        let context = ko.contextFor(this);
+                        me.timeline.changeDataset(context.$data);
+                        me.selectedDataset(context.$data);
+                        me.attachEventHandlers();
+                    });
+                }
+            }
+
             document.getElementById("timeline-table").addEventListener("click", function (e) {
                 let context = ko.contextFor(e.target);
                 if (context.$data.typeId === DataCell.TypeCode) {
@@ -35,38 +66,6 @@ namespace VBench {
                     }
                 }
             });
-
-            let btn = document.getElementById("chart-lines-btn");
-            if (btn) {
-                btn.addEventListener("click", function (e) {
-                    me.timeline.toggleChartLines();
-                });
-            }
-
-            let menu = <HTMLSelectElement>document.getElementById("compute-menu");
-            if (menu) {
-                menu.selectedIndex = DataCell.comparisonKind;
-                menu.addEventListener("click", function (e) {
-                    DataCell.comparisonKind = menu.selectedIndex;
-                    Service.saveComparisonKey(DataCell.comparisonKind);
-                    me.timeline.data.refresh();
-                }, { passive: true });
-            }
-
-            let tabs = document.getElementsByClassName("tab-btn");
-            for (let i = 0; i < tabs.length; i++) {
-                tabs[i].addEventListener("click", function (e) {
-                    for (var t = 0; t < tabs.length; t++) {
-                        tabs[t].classList.remove("is-active");
-                    }
-
-                    let context = ko.contextFor(this);
-                    (<HTMLElement>this).classList.add("is-active");
-                    me.timeline.changeDataset(context.$data);
-                    me.selectedDataset(context.$data);
-                });
-            }
-            tabs[0].classList.add("is-active");
 
             let sortButtons = document.getElementsByClassName("sortable");
             for (let i = 0; i < sortButtons.length; i++) {

@@ -38,6 +38,20 @@ namespace VBench {
 
         // ===== Local Storage ===== //
 
+        public static saveMostRecentDataset(name: string): void {
+            if (window.localStorage) {
+                window.localStorage.setItem("selectedDataset", name);
+            }
+        }
+
+        public static getMostRecentDataset(): string {
+            if (window.localStorage) {
+                return window.localStorage.getItem("selectedDataset");
+            }
+
+            return null;
+        }
+
         public static saveComparisonKey(value: DeltaComparison): void {
             if (window.localStorage) {
                 window.localStorage.setItem("DeltaComparison", value.toString());
