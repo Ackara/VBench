@@ -156,9 +156,6 @@ namespace Acklann.VBench
                 result.Rows = new object[mostRecentTest.Rows.Length][];
                 curatedValues = new object[mostRecentTest.Columns.Length];
                 result.Columns = mostRecentTest.Columns.Select(x => x.Clone()).ToArray();
-                mostRecentTest.Jobs = (from t in allTheTests
-                                       from r in t.Rows
-                                       select r[CuratedDatasetColumn.JobColumnIndex].ToString()).Distinct().ToArray();
 
                 for (int rowIndex = 0; rowIndex < mostRecentTest.Rows.Length; rowIndex++)
                 {

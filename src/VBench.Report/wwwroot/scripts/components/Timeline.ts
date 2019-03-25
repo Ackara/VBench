@@ -166,6 +166,16 @@ namespace VBench {
                                 me.selectContributor(item.index);
                                 let set = data.datasets[item.datasetIndex];
                                 return ` ${set.label}: ${Formatter.format(<number>set.data[item.index], (<any>set).vbench_unitType)}`;
+                            },
+                            afterBody: (item, data) => {
+                                let info = [
+                                    '',
+                                    `Tester: ${me.selectedContributor.author()}`,
+                                    `Commit: ${me.selectedContributor.commitId().substring(0, 6)}`,
+                                    '',
+                                ];
+
+                                return info.concat(me.selectedContributor.hardwareInformation().split("\n"));
                             }
                         }
                     }
