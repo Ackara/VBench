@@ -38,14 +38,22 @@ namespace VBench {
 
         // ===== Local Storage ===== //
 
+        public static canUseLocalStorage(): boolean {
+            if (/Edge\/\d./i.test(navigator.userAgent) || /MSIE/i.test(navigator.userAgent)) {
+                return false;
+            }
+
+            return window.hasOwnProperty("localStorage");
+        }
+
         public static saveMostRecentDataset(name: string): void {
-            if (window.localStorage) {
+            if (this.canUseLocalStorage()) {
                 window.localStorage.setItem("selectedDataset", name);
             }
         }
 
         public static getMostRecentDataset(): string {
-            if (window.localStorage) {
+            if (this.canUseLocalStorage()) {
                 return window.localStorage.getItem("selectedDataset");
             }
 
@@ -53,13 +61,13 @@ namespace VBench {
         }
 
         public static saveComparisonKey(value: DeltaComparison): void {
-            if (window.localStorage) {
+            if (this.canUseLocalStorage()) {
                 window.localStorage.setItem("DeltaComparison", value.toString());
             }
         }
 
         public static getDeltaComparison(): number {
-            if (window.localStorage) {
+            if (this.canUseLocalStorage()) {
                 return parseInt(window.localStorage.getItem("DeltaComparison")) || DeltaComparison.previous;
             }
 
@@ -67,7 +75,7 @@ namespace VBench {
         }
 
         public static saveColumn(column: DataColumn): void {
-            if (window.localStorage) {
+            if (this.canUseLocalStorage()) {
                 let base = `${(column.table.name())}.${column.name()}_col`;
 
                 let key = `${base}.order`;
@@ -80,7 +88,7 @@ namespace VBench {
         }
 
         public static restoreColumn(column: DataColumn): void {
-            if (window.localStorage) {
+            if (this.canUseLocalStorage()) {
                 let base = `${(column.table.name())}.${column.name()}_col`;
 
                 let key = `${base}.order`;
@@ -94,7 +102,7 @@ namespace VBench {
         }
 
         public static saveCell(cell: DataCell): void {
-            if (window.localStorage) {
+            if (this.canUseLocalStorage()) {
                 let key = `${cell.row.table.name()}.${cell.row.table.columns()[cell.columnIndex].name()}.row${cell.row.index}`;
 
                 if (cell.isSelected()) {
@@ -108,7 +116,7 @@ namespace VBench {
         }
 
         public static restoreCell(cell: DataCell): void {
-            if (window.localStorage) {
+            if (this.canUseLocalStorage()) {
                 let key = `${cell.row.table.name()}.${cell.row.table.columns()[cell.columnIndex].name()}.row${cell.row.index}`;
                 cell.isSelected(JSON.parse(window.localStorage.getItem(key)) || false);
                 //console.debug(`restore: ${key} = ${cell.isSelected()}`);
@@ -116,14 +124,14 @@ namespace VBench {
         }
 
         public static saveTimeline(timeline: Timeline): void {
-            if (window.localStorage) {
+            if (this.canUseLocalStorage()) {
                 window.localStorage.setItem("timeline.lines", `${timeline.linesEnabled()}`);
                 //console.debug(`set: timeline.lines = ${timeline.linesEnabled()}`);
             }
         }
 
         public static restoreTimeline(timeline: Timeline): void {
-            if (window.localStorage) {
+            if (this.canUseLocalStorage()) {
                 timeline.linesEnabled(JSON.parse(window.localStorage.getItem("timeline.lines")) || timeline.linesEnabled);
                 //console.debug(`restore: timeline.lines = ${timeline.linesEnabled()}`);
             }

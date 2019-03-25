@@ -32,9 +32,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="templates/*.html" />
-    <EmbeddedResource Update="templates\Timeline.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="templates\" />

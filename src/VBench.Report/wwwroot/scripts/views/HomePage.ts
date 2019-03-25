@@ -11,7 +11,7 @@ namespace VBench {
             this.datasetTabs = ko.observableArray(datasetNames);
             this.selectedDataset = ko.observable(Service.getMostRecentDataset() || datasetNames[0]);
             this.selectedDataset.subscribe(function (newValue) { Service.saveMostRecentDataset(newValue); })
-
+            
             DataCell.comparisonKind = Service.getDeltaComparison();
             this.timeline = new Timeline(this._repository);
             this.timeline.changeDataset(this.selectedDataset());
