@@ -16,7 +16,7 @@
                     "patch":  10
                 },
     "branchSuffixMap":  {
-                            "master":  "rc",
+                            "master":  "",
                             "*":  "rc"
                         }
 }
