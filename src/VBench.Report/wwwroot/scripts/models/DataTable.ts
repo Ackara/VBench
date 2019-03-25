@@ -9,16 +9,19 @@ namespace VBench {
             this.rows = ko.observableArray();
             this.columns = ko.observableArray();
             this.description = ko.observable("");
+            this.jobs = ko.observableArray();
         }
 
         public name: KnockoutObservable<string>;
         public description: KnockoutObservable<string>;
 
+        public jobs: KnockoutObservableArray<string>;
         public rows: KnockoutObservableArray<DataRow>;
         public columns: KnockoutObservableArray<DataColumn>;
 
         public addColumn(model: any): DataColumn {
-            let newColumn = new DataColumn(this, model, this.columns().length);
+            let newColumn = new DataColumn(this, model);
+            Service.restoreColumn(newColumn);
             this.columns.push(newColumn);
             return newColumn;
         }
@@ -43,6 +46,14 @@ namespace VBench {
         public reset(): void {
             for (let i = 0; i < this.columns().length; i++) {
                 this.columns()[i].isSelected(false);
+            }
+        }
+
+        public sort(): void {
+            for (let i = 0; i < this.columns().length; i++) {
+                if (this.columns()[i].isSelected()) {
+                    this.columns()[i].sort(false);
+                }
             }
         }
     }

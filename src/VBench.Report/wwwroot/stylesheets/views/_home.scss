@@ -69,6 +69,7 @@ select {
 /* IE 10+ */
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
     #chart {
-        height: 25% !important;
+        height: 60vh !important;
+        width: 100% !important;
     }
 }

@@ -11,9 +11,12 @@ namespace VBench {
             this.values = ko.observableArray();
             this.key = model[ColumnIndex.Method];
             this.isSelected = ko.observable(false);
+            this.index = parent.rows().length;
 
             for (let columnIndex = 0; columnIndex < model.length; columnIndex++) {
-                this.values.push(new DataCell(this, columnIndex, model[columnIndex]));
+                let newCell = new DataCell(this, columnIndex, model[columnIndex]);
+                Service.restoreCell(newCell);
+                this.values.push(newCell);
             }
 
             this.isSelected = ko.pureComputed(function () {
@@ -30,6 +33,7 @@ namespace VBench {
 
         public readonly key: string;
         public readonly table: DataTable;
+        public readonly index: number;
 
         public isSelected: KnockoutObservable<boolean>;
         public values: KnockoutObservableArray<DataCell>;

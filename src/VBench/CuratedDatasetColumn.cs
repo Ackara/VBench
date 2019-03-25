@@ -24,6 +24,7 @@ namespace Acklann.VBench
             IsNumeric = true;
         }
 
+        public const int JobColumnIndex = 1;
         public static string[] RequiredColumns = new string[] { "Job" };
 
         [JsonIgnore]
@@ -32,6 +33,8 @@ namespace Acklann.VBench
         public string Name { get; set; }
 
         public bool IsNumeric { get; set; }
+
+        public bool IsHidden { get; set; }
 
         public UnitType UnitKind { get; set; }
 
@@ -44,6 +47,7 @@ namespace Acklann.VBench
                 Name = Name,
                 Index = Index,
                 UnitKind = UnitKind,
+                IsHidden = IsHidden,
                 IsNumeric = IsNumeric
             };
         }

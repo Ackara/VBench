@@ -1,4 +1,10 @@
-﻿namespace VBench {
+﻿/// <reference path="../components/Timeline.ts" />
+/// <reference path="../models/DataColumn.ts" />
+/// <reference path="../models/DataCell.ts" />
+/// <reference path="DeltaComparison.ts" />
+/// <reference path="Order.ts" />
+
+namespace VBench {
     export class Service {
         public static sendHttpRequest(method: string, url: string, data: any, callback: (error, data) => void): void {
             let request = new XMLHttpRequest();
@@ -28,6 +34,85 @@
 
         public static postData(url: string, data: any, callback: (error, data) => void): void {
             return this.sendHttpRequest("POST", url, data, callback);
+        }
+
+        // ===== Local Storage ===== //
+
+        public static saveComparisonKey(value: DeltaComparison): void {
+            if (window.localStorage) {
+                window.localStorage.setItem("DeltaComparison", value.toString());
+            }
+        }
+
+        public static getDeltaComparison(): number {
+            if (window.localStorage) {
+                return parseInt(window.localStorage.getItem("DeltaComparison")) || DeltaComparison.previous;
+            }
+
+            return DeltaComparison.previous;
+        }
+
+        public static saveColumn(column: DataColumn): void {
+            if (window.localStorage) {
+                let base = `${(column.table.name())}.${column.name()}_col`;
+
+                let key = `${base}.order`;
+                window.localStorage.removeItem(key);
+                window.localStorage.setItem(key, `${column.order()}`);
+
+                window.localStorage.setItem(`${base}.selected`, `${column.isSelected()}`);
+                //console.debug(`set: ${key} = ${column.order() === Order.Asc ? 'Asc' : 'Desc'}`);
+            }
+        }
+
+        public static restoreColumn(column: DataColumn): void {
+            if (window.localStorage) {
+                let base = `${(column.table.name())}.${column.name()}_col`;
+
+                let key = `${base}.order`;
+                column.order((parseInt(window.localStorage.getItem(key)) || Order.Asc));
+                //console.debug(`restore: ${key} = ${column.order() === Order.Asc ? 'Asc' : 'Desc'}`);
+
+                key = `${base}.selected`;
+                column.isSelected(JSON.parse(window.localStorage.getItem(key)) || false);
+                //console.debug(`restore: ${key} = ${column.isSelected()}`);
+            }
+        }
+
+        public static saveCell(cell: DataCell): void {
+            if (window.localStorage) {
+                let key = `${cell.row.table.name()}.${cell.row.table.columns()[cell.columnIndex].name()}.row${cell.row.index}`;
+
+                if (cell.isSelected()) {
+                    window.localStorage.setItem(key, `${cell.isSelected()}`);
+                }
+                else {
+                    window.localStorage.removeItem(key);
+                }
+                //console.debug(`set: ${key} = ${cell.isSelected()}`);
+            }
+        }
+
+        public static restoreCell(cell: DataCell): void {
+            if (window.localStorage) {
+                let key = `${cell.row.table.name()}.${cell.row.table.columns()[cell.columnIndex].name()}.row${cell.row.index}`;
+                cell.isSelected(JSON.parse(window.localStorage.getItem(key)) || false);
+                //console.debug(`restore: ${key} = ${cell.isSelected()}`);
+            }
+        }
+
+        public static saveTimeline(timeline: Timeline): void {
+            if (window.localStorage) {
+                window.localStorage.setItem("timeline.lines", `${timeline.linesEnabled()}`);
+                //console.debug(`set: timeline.lines = ${timeline.linesEnabled()}`);
+            }
+        }
+
+        public static restoreTimeline(timeline: Timeline): void {
+            if (window.localStorage) {
+                timeline.linesEnabled(JSON.parse(window.localStorage.getItem("timeline.lines")) || timeline.linesEnabled);
+                //console.debug(`restore: timeline.lines = ${timeline.linesEnabled()}`);
+            }
         }
     }
 }

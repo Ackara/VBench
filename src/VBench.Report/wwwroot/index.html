@@ -29,8 +29,8 @@
                 </header>
 
                 <div class="links row right wrap baseline w100">
-                    <!--<a target="_blank" title="Donate" href="#"><i class="sf-icon sf-icon-donate"></i></a>
-                    <a target="_blank" title="Web" href="https://folio12.azurewebsites.net/"><i class="sf-icon sf-icon-web"></i></a>-->
+                    <a class="hide" target="_blank" title="Donate" href="#"><i class="sf-icon sf-icon-donate"></i></a>
+                    <a class="hide" target="_blank" title="Store" href="https://folio12.azurewebsites.net/"><i class="sf-icon sf-icon-web"></i></a>
                     <a target="_blank" title="GitHub" href="https://github.com/Ackara/VBench"><svg><use xlink:href="#github-svg"></use></svg></a>
                 </div>
             </div>
@@ -52,19 +52,19 @@
                     </select>
                 </div>
 
-                <button id="chart-lines-btn">
-                    <span>curves: </span>
-                    <span class="chart-lines-btn-value accent-color">on</span>
-                </button>
-
-                <div class="row baseline">
+                <!--<div class="row baseline">
                     <label>jobs: </label>
-                    <select class="drop-down-menu column accent-color">
-                        <option selected>All</option>
-                        <option>Dry</option>
-                        <option>Short</option>
-                    </select>
+                    <select class="drop-down-menu column accent-color"
+                            data-bind=""></select>
                 </div>
+
+                <div class="subtle-color">|</div>-->
+
+                <button id="chart-lines-btn">
+                    <span>lines: </span>
+                    <span class="chart-lines-btn-value accent-color"
+                          data-bind="text: (timeline.linesEnabled()? 'on' : 'off')"></span>
+                </button>
             </div>
 
             <div class="tabs row w100"
@@ -79,7 +79,7 @@
                 <thead>
                     <tr data-bind="foreach: data.columns">
                         <th class="sortable ucase"
-                            data-bind="css: { 'is-active': isSelected }">
+                            data-bind="css: { 'is-active': isSelected, 'is-hidden': isHidden }">
                             <span data-bind="text: name"></span>
                             <span class="float-r"><i class="sf-icon sf-icon-sort"></i></span>
                         </th>
@@ -90,7 +90,7 @@
                     <tr class="benchmark"
                         data-bind="foreach: values, css: { 'is-active': isSelected }">
                         <td class="cell"
-                            data-bind="css: { 'is-active': isSelected, 'is-numeric': isNumeric }">
+                            data-bind="css: { 'is-active': isSelected, 'is-numeric': isNumeric, 'is-hidden': isHidden }">
                             <div>
                                 <span class="cell-value" data-bind="text: (value() || value() === 0 ? value() : 'N/A')"></span>
                                 <span class="cell-value computed" data-bind="html: difference"></span>
@@ -107,6 +107,7 @@
         {
         "name": "VBench.Sample.RandomTest",
         "date": "0001-01-01T00:00:00",
+        "jobs": ["Dry", "Short"],
         "contributions": [
         {
         "date": "2019-02-26T00:00:00-04:00",
@@ -123,7 +124,8 @@
         "columns": [
         { "name": "Method", "isNumeric": false, "unitKind": 0 },
         { "name": "Mean", "isNumeric": true, "unitKind": 1 },
-        { "name": "Allocated", "isNumeric": true, "unitKind": 2 }
+        { "name": "Allocated", "isNumeric": true, "unitKind": 2 },
+        { "name": "Job", "isNumeric": false, "unitKind": 0, "isHidden": true }
         ],
         "rows": [
         [
@@ -137,7 +139,8 @@
         { "value": 16, "friendlyValue": "16 B" },
         { "value": 128, "friendlyValue": "128 B" },
         { "value": 18, "friendlyValue": "18 B" }
-        ]
+        ],
+        "Dry"
         ],
         [
         "Algorithm B",
@@ -150,7 +153,8 @@
         { "value": 5, "friendlyValue": "5 B" },
         { "value": 12, "friendlyValue": "12 B" },
         { "value": 35, "friendlyValue": "35 B" }
-        ]
+        ],
+        "Dry"
         ]
         ]
         }

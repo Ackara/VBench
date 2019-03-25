@@ -76,7 +76,7 @@ th, td {
         transition: background-color ease-in 250ms;
 
         & + td {
-            border-color: $accent-color-1;
+            border-left-color: $accent-color-1;
         }
 
         .computed {

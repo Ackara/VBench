@@ -11,8 +11,10 @@ namespace VBench {
             this.datasetTabs = ko.observableArray(datasetNames);
             this.selectedDataset = ko.observable(datasetNames[0]);
 
+            DataCell.comparisonKind = Service.getDeltaComparison();
             this.timeline = new Timeline(this._repository);
             this.timeline.changeDataset(datasetNames[0]);
+            this.timeline.restore();
         }
 
         private readonly _repository: Repository;
@@ -31,23 +33,22 @@ namespace VBench {
                         cell.isSelected(!cell.isSelected());
                         me.timeline.updateChart(cell);
                     }
-                    console.debug(`${cell.unitKind}: ${cell.isNumeric()}`);
                 }
             });
 
             let btn = document.getElementById("chart-lines-btn");
             if (btn) {
                 btn.addEventListener("click", function (e) {
-                    let on = me.timeline.toggleChartLines();
-                    let value = btn.getElementsByClassName("chart-lines-btn-value")[0];
-                    value.innerHTML = (on ? "on" : "off");
+                    me.timeline.toggleChartLines();
                 });
             }
 
             let menu = <HTMLSelectElement>document.getElementById("compute-menu");
             if (menu) {
+                menu.selectedIndex = DataCell.comparisonKind;
                 menu.addEventListener("click", function (e) {
                     DataCell.comparisonKind = menu.selectedIndex;
+                    Service.saveComparisonKey(DataCell.comparisonKind);
                     me.timeline.data.refresh();
                 }, { passive: true });
             }

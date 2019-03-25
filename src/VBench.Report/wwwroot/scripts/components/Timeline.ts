@@ -3,6 +3,7 @@
 /// <reference path="../components/ColorGenerator.ts" />
 /// <reference path="../domain/Repository.ts" />
 /// <reference path="../domain/Formatter.ts" />
+/// <reference path="../domain/Service.ts" />
 /// <reference path="../models/DataTable.ts" />
 /// <reference path="../models/DataCell.ts" />
 /// <reference path="../models/Contributor.ts" />
@@ -10,13 +11,12 @@
 namespace VBench {
     export class Timeline {
         constructor(data: Repository) {
-            let me = this;
             this._repository = data;
-            this._linesEnabled = true;
             this.data = new DataTable();
             this._colorPicker = new ColorGenerator();
             this._chart = this.createLineChart();
 
+            this.linesEnabled = ko.observable(true);
             this.contributors = ko.observableArray();
             this.selectedContributor = new Contributor();
         }
@@ -25,12 +25,25 @@ namespace VBench {
         private readonly _repository: Repository;
         private readonly _colorPicker: ColorGenerator;
         private _selectedDatasetId: string;
-        private _linesEnabled: boolean;
 
         public data: DataTable;
         public selectedContributor: Contributor;
+        public linesEnabled: KnockoutObservable<boolean>;
         public contributors: KnockoutObservableArray<Contributor>;
         public selectedContributorIndex: KnockoutObservable<number>;
+
+        public restore(): void {
+            Service.restoreTimeline(this);
+            for (let x = 0; x < this.data.rows().length; x++) {
+                let row = this.data.rows()[x].values();
+
+                for (var y = 0; y < row.length; y++) {
+                    if (row[y].isSelected()) {
+                        this.updateChart(row[y]);
+                    }
+                }
+            }
+        }
 
         public changeDataset(datasetId: string = null): void {
             this._selectedDatasetId = (datasetId ? datasetId : this._selectedDatasetId);
@@ -83,6 +96,7 @@ namespace VBench {
                 }
             }
 
+            Service.saveCell(dataCell);
             this._chart.update();
         }
 
@@ -96,17 +110,19 @@ namespace VBench {
         }
 
         public toggleChartLines(): boolean {
-            this._linesEnabled = !this._linesEnabled;
+            let me = this;
+            this.linesEnabled(!this.linesEnabled());
             let config = this.createSeriesBaseSettings();
+            Service.saveTimeline(this);
 
             this._chart.data.datasets.forEach((dataset) => {
-                dataset.showLine = this._linesEnabled;
+                dataset.showLine = me.linesEnabled();
                 dataset.pointStyle = config.pointStyle;
                 dataset.pointRadius = config.pointRadius;
                 dataset.pointBorderWidth = config.pointBorderWidth;
             });
             this._chart.update();
-            return this._linesEnabled;
+            return this.linesEnabled();
         }
 
         private createLineChart(): Chart {
@@ -163,12 +179,12 @@ namespace VBench {
             let config: Chart.ChartDataSets = {
                 fill: false,
                 pointHitRadius: 20,
-                showLine: this._linesEnabled,
+                showLine: this.linesEnabled(),
                 backgroundColor: color.getValue(),
                 borderColor: [color.getValue(0.75)],
-                pointRadius: (this._linesEnabled ? 3 : 20),
-                pointBorderWidth: (this._linesEnabled ? 6 : 6),
-                pointStyle: (this._linesEnabled ? "circle" : "line"),
+                pointRadius: (this.linesEnabled() ? 3 : 20),
+                pointBorderWidth: (this.linesEnabled() ? 6 : 6),
+                pointStyle: (this.linesEnabled() ? "circle" : "line"),
             };
 
             return config;

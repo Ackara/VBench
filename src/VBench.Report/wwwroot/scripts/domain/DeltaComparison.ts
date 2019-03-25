@@ -1,5 +1,5 @@
 ﻿namespace VBench {
-    export const enum ComparisonMethod {
+    export const enum DeltaComparison {
         previous,
         min,
         max

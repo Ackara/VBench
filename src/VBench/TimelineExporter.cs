@@ -33,14 +33,14 @@ namespace Acklann.VBench
         /// <summary>
         /// Initializes a new instance of the <see cref="TimelineExporter"/> class.
         /// </summary>
-        /// <param name="captureGitEmail">if set to <c>true</c> [capture git email].</param>
-        public TimelineExporter(bool captureGitEmail)
+        /// <param name="captureEmail">if set to <c>true</c> [capture git email].</param>
+        public TimelineExporter(bool captureEmail)
         {
             Name = $"{nameof(VBench)}";
             _fileName = $"{nameof(VBench).ToLowerInvariant()}";
             _templateName = Template.Timeline;
 
-            _captureEmail = captureGitEmail;
+            _captureEmail = captureEmail;
             _unitsOfTime.Add("us", TimeUnit.Nanosecond); //For some reason TimeUnit don't have us registed as nanoseconds.
         }
 
@@ -110,6 +110,7 @@ namespace Acklann.VBench
                     columns.Add(new CuratedDatasetColumn
                     {
                         Index = column.Index,
+                        IsHidden = column.NeedToShow == false,
                         Name = column.OriginalColumn.ColumnName,
                         UnitKind = column.OriginalColumn.UnitType,
                         IsNumeric = column.OriginalColumn.IsNumeric
@@ -155,6 +156,9 @@ namespace Acklann.VBench
                 result.Rows = new object[mostRecentTest.Rows.Length][];
                 curatedValues = new object[mostRecentTest.Columns.Length];
                 result.Columns = mostRecentTest.Columns.Select(x => x.Clone()).ToArray();
+                mostRecentTest.Jobs = (from t in allTheTests
+                                       from r in t.Rows
+                                       select r[CuratedDatasetColumn.JobColumnIndex].ToString()).Distinct().ToArray();
 
                 for (int rowIndex = 0; rowIndex < mostRecentTest.Rows.Length; rowIndex++)
                 {

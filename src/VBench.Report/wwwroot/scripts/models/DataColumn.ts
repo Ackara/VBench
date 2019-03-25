@@ -5,15 +5,19 @@
 
 namespace VBench {
     export class DataColumn {
-        constructor(parent: DataTable, model: any, index: number) {
+        constructor(parent: DataTable, model: any) {
+            let me = this;
             this.table = parent;
-            this.index = index;
             this.unitKind = model.unitKind;
             this.isNumeric = model.isNumeric;
+            this.index = parent.columns().length;
 
             this.order = ko.observable(Order.Asc);
             this.isSelected = ko.observable(false);
             this.name = ko.observable(model.name || "-");
+            this.isHidden = ko.observable(model.isHidden);
+
+            this.isSelected.subscribe(function (newValue) { Service.saveColumn(me); })
         }
 
         public readonly table: DataTable;
@@ -23,28 +27,38 @@ namespace VBench {
 
         public name: KnockoutObservable<string>;
         public order: KnockoutObservable<Order>;
+        public isHidden: KnockoutObservable<boolean>;
         public isSelected: KnockoutObservable<boolean>;
 
-        public sort(): void {
+        public sort(invert: boolean = true): void {
             let me = this;
-            console.debug(`sorting ${this.name()} column [${this.order()}]`);
+            if (invert) {
+                this.order(this.order() === Order.Asc ? Order.Desc : Order.Asc);
+                this.isSelected(true);
+                Service.saveColumn(this);
+            }
 
-            this.table.rows.sort(function (x, y) {
-                let xv = x.values()[me.index].rawValue;
-                let yv = y.values()[me.index].rawValue;
-                //console.debug(`${xv} === ${yv}`);
+            console.debug(`sorting column[${this.name()}] ${this.order() === Order.Asc ? 'Asc' : 'Desc'}`);
+            if (this.order() === Order.Asc) {
+                this.table.rows.sort(function (x, y) {
+                    let xv = x.values()[me.index].rawValue;
+                    let yv = y.values()[me.index].rawValue;
 
-                if (xv > yv && me.order() === Order.Asc) return 1;
-                else if (xv < yv && me.order() === Order.Asc) return -1;
+                    if (xv > yv) return 1;
+                    else if (xv < yv) return -1;
+                    else return 0;
+                });
+            }
+            else {
+                this.table.rows.sort(function (x, y) {
+                    let xv = x.values()[me.index].rawValue;
+                    let yv = y.values()[me.index].rawValue;
 
-                else if (xv > yv && me.order() === Order.Desc) return -1;
-                else if (xv < yv && me.order() === Order.Desc) return 1;
-
-                else return 0;
-            });
-
-            this.isSelected(true);
-            this.order(this.order() === Order.Asc ? Order.Desc : Order.Asc);
+                    if (xv > yv) return -1;
+                    else if (xv < yv) return 1;
+                    else return 0;
+                });
+            }
         }
     }
 }

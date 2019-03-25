@@ -1,9 +1,10 @@
 ﻿/// <reference path="../../../node_modules/@types/knockout/index.d.ts" />
-/// <reference path="../domain/ComparisonMethod.ts" />
+/// <reference path="../domain/DeltaComparison.ts" />
 /// <reference path="../domain/Formatter.ts" />
 /// <reference path="../domain/UnitType.ts" />
 /// <reference path="DataColumn.ts" />
 /// <reference path="DataRow.ts" />
+
 
 namespace VBench {
     export class DataCell {
@@ -15,11 +16,18 @@ namespace VBench {
             this.difference = ko.observable();
             this.isNumeric = ko.observable(false);
             this.isSelected = ko.observable(false);
+            this.isHidden = ko.observable(parent.table.columns()[columnIndex].isHidden());
+
+            if (window.localStorage) {
+                let key = `cell${parent.index}${columnIndex}`;
+                let value = window.localStorage.getItem(key);
+            }
+
             this.computeValue(model, parent.table.columns()[columnIndex]);
             this.computeDifference();
         }
 
-        public static comparisonKind: ComparisonMethod = ComparisonMethod.previous;
+        public static comparisonKind: DeltaComparison = DeltaComparison.previous;
         public static readonly TypeCode: number = 3;
         public readonly typeId = DataCell.TypeCode;
         public readonly row: DataRow;
@@ -32,6 +40,7 @@ namespace VBench {
         public value: KnockoutObservable<any>;
         public difference: KnockoutObservable<any>;
 
+        public isHidden: KnockoutObservable<boolean>;
         public isNumeric: KnockoutObservable<boolean>;
         public isSelected: KnockoutObservable<boolean>;
 
@@ -100,18 +109,18 @@ namespace VBench {
             if (current === null || current === undefined) { return; }
 
             switch (DataCell.comparisonKind) {
-                case ComparisonMethod.previous:
+                case DeltaComparison.previous:
                     other = (values.length >= 2 ? values[values.length - 2] : current);
                     break;
 
-                case ComparisonMethod.min:
+                case DeltaComparison.min:
                     other = current;
                     for (let i = 0; i < values.length; i++) {
                         if (values[i] < other) { other = values[i]; }
                     }
                     break;
 
-                case ComparisonMethod.max:
+                case DeltaComparison.max:
                     other = current;
                     for (let i = 0; i < values.length; i++) {
                         if (values[i] > other) { other = values[i]; }

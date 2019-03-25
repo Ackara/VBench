@@ -10,6 +10,8 @@ namespace Acklann.VBench
 
         public string Name { get; set; }
 
+        public string[] Jobs { get; set; }
+
         public Contributor[] Contributions { get; internal set; }
 
         public CuratedDatasetColumn[] Columns { get; set; }

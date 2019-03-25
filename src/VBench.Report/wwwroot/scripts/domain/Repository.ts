@@ -19,6 +19,7 @@ namespace VBench {
 
             result.clear();
             result.name(datasetId);
+            result.jobs(dataset.jobs);
             result.description(contributors[contributors.length - 1].hardwareInformation);
 
             let numberOfColumns = dataset.columns.length;
@@ -29,6 +30,7 @@ namespace VBench {
             for (let i = 0; i < dataset.rows.length; i++) {
                 result.addRow(dataset.rows[i]);
             }
+            result.sort();
 
             hosts.removeAll();
             for (let i = 0; i < contributors.length; i++) {
