@@ -52,14 +52,6 @@
                     </select>
                 </div>
 
-                <!--<div class="row baseline">
-                    <label>jobs: </label>
-                    <select class="drop-down-menu column accent-color"
-                            data-bind=""></select>
-                </div>
-
-                <div class="subtle-color">|</div>-->
-
                 <button id="chart-lines-btn">
                     <span>lines: </span>
                     <span class="chart-lines-btn-value accent-color"
@@ -71,8 +63,6 @@
                  data-bind="visible: (datasetTabs().length > 1), foreach: datasetTabs">
                 <button class="tab-btn header w100 p50"
                         data-bind="text: $data, css: { 'is-active': ($data === $parent.selectedDataset()) }"></button>
-
-                
             </div>
 
             <table id="timeline-table"
@@ -107,524 +97,55 @@
     <script id="data" type="application/json">
         [
         {
-        "name": "Acklann.GlobN.ComparisonTest",
+        "name": "VBench.Sample.RandomTest",
+        "date": "0001-01-01T00:00:00",
         "contributions": [
         {
-        "date": "2019-03-24T00:00:00-04:00",
+        "date": "2019-02-26T00:00:00-04:00",
         "wasClean": false,
         "branch": "master",
-        "sha": "eac743bea0affcfbe274df8c22145a1010e34053",
-        "commitMessage": "Improve benchmarks",
+        "sha": "ea06b0bedf1f2ea8082c66153f0adad51f9ee828",
+        "commitMessage": "Improve timeline",
         "author": "Ackara",
-        "email": null,
-        "emailMD5": null,
-        "hardwareInformation": "BenchmarkDotNet=v0.11.4, OS=Windows 10.0.17134.648 (1803/April2018Update/Redstone4)\r\nIntel Core i7-6700K CPU 4.00GHz (Skylake), 1 CPU, 8 logical and 4 physical cores\r\n.NET Core SDK=2.1.505"
+        "email": "example@outlook.com",
+        "emailMD5": "205e460b479e2e5b48aec07710c08d50",
+        "hardwareInformation": "BenchmarkDotNet=v1.22.5, OS=Windows 10.0.17134.590 (1803/April2018Update/Redstone4)\r\nIntel Core i7-6700K CPU 4.00GHz (Skylake), 1 CPU, 8 logical and 4 physical cores\r\n.NET Core SDK=2.1.504"
         }
         ],
         "columns": [
-        {
-        "name": "Method",
-        "isNumeric": false,
-        "isHidden": false,
-        "unitKind": 0
-        },
-        {
-        "name": "Job",
-        "isNumeric": false,
-        "isHidden": true,
-        "unitKind": 0
-        },
-        {
-        "name": "Mean",
-        "isNumeric": true,
-        "isHidden": false,
-        "unitKind": 1
-        },
-        {
-        "name": "Error",
-        "isNumeric": true,
-        "isHidden": false,
-        "unitKind": 1
-        },
-        {
-        "name": "Ratio",
-        "isNumeric": true,
-        "isHidden": false,
-        "unitKind": 0
-        },
-        {
-        "name": "RatioSD",
-        "isNumeric": true,
-        "isHidden": false,
-        "unitKind": 0
-        },
-        {
-        "name": "Rank",
-        "isNumeric": true,
-        "isHidden": false,
-        "unitKind": 0
-        }
+        { "name": "Method", "isNumeric": false, "unitKind": 0 },
+        { "name": "Mean", "isNumeric": true, "unitKind": 1 },
+        { "name": "Allocated", "isNumeric": true, "unitKind": 2 },
+        { "name": "Job", "isNumeric": false, "unitKind": 0, "isHidden": true }
         ],
         "rows": [
         [
-        "Regex",
-        "Default",
+        "Algorithm A",
         [
-        null
+        { "value": 21, "friendlyValue": "21 ns" },
+        { "value": 13, "friendlyValue": "13 ns" },
+        { "value": 5, "friendlyValue": "5 ns" }
         ],
         [
-        null
+        { "value": 16, "friendlyValue": "16 B" },
+        { "value": 128, "friendlyValue": "128 B" },
+        { "value": 18, "friendlyValue": "18 B" }
         ],
-        [
-        null
-        ],
-        [
-        null
-        ],
-        [
-        null
-        ]
-        ],
-        [
-        "GlobN",
-        "Default",
-        [
-        null
-        ],
-        [
-        null
-        ],
-        [
-        null
-        ],
-        [
-        null
-        ],
-        [
-        null
-        ]
-        ],
-        [
-        "DotNet.Glob",
-        "Default",
-        [
-        null
-        ],
-        [
-        null
-        ],
-        [
-        null
-        ],
-        [
-        null
-        ],
-        [
-        null
-        ]
-        ],
-        [
-        "Glob",
-        "Default",
-        [
-        null
-        ],
-        [
-        null
-        ],
-        [
-        null
-        ],
-        [
-        null
-        ],
-        [
-        null
-        ]
-        ]
-        ]
-        },
-        {
-        "name": "Acklann.GlobN.EvaluationTest",
-        "contributions": [
-        {
-        "date": "2019-03-24T00:00:00-04:00",
-        "wasClean": false,
-        "branch": "master",
-        "sha": "eac743bea0affcfbe274df8c22145a1010e34053",
-        "commitMessage": "Improve benchmarks",
-        "author": "Ackara",
-        "email": null,
-        "emailMD5": null,
-        "hardwareInformation": "BenchmarkDotNet=v0.11.4, OS=Windows 10.0.17134.648 (1803/April2018Update/Redstone4)\r\nIntel Core i7-6700K CPU 4.00GHz (Skylake), 1 CPU, 8 logical and 4 physical cores\r\n.NET Core SDK=2.1.505"
-        }
-        ],
-        "columns": [
-        {
-        "name": "Method",
-        "isNumeric": false,
-        "isHidden": false,
-        "unitKind": 0
-        },
-        {
-        "name": "Job",
-        "isNumeric": false,
-        "isHidden": true,
-        "unitKind": 0
-        },
-        {
-        "name": "Pattern",
-        "isNumeric": false,
-        "isHidden": false,
-        "unitKind": 0
-        },
-        {
-        "name": "Mean",
-        "isNumeric": true,
-        "isHidden": false,
-        "unitKind": 1
-        },
-        {
-        "name": "Error",
-        "isNumeric": true,
-        "isHidden": false,
-        "unitKind": 1
-        },
-        {
-        "name": "StdDev",
-        "isNumeric": true,
-        "isHidden": false,
-        "unitKind": 1
-        },
-        {
-        "name": "Gen 0/1k Op",
-        "isNumeric": true,
-        "isHidden": false,
-        "unitKind": 0
-        },
-        {
-        "name": "Gen 1/1k Op",
-        "isNumeric": true,
-        "isHidden": false,
-        "unitKind": 0
-        },
-        {
-        "name": "Gen 2/1k Op",
-        "isNumeric": true,
-        "isHidden": false,
-        "unitKind": 0
-        },
-        {
-        "name": "Allocated Memory/Op",
-        "isNumeric": true,
-        "isHidden": false,
-        "unitKind": 2
-        }
-        ],
-        "rows": [
-        [
-        "IsMatch",
-        "Default",
-        "*.txt",
-        [
-        {
-        "value": 250.8,
-        "friendlyValue": "250.80 ns"
-        }
-        ],
-        [
-        {
-        "value": 0.9915,
-        "friendlyValue": "0.9915 ns"
-        }
-        ],
-        [
-        {
-        "value": 0.9275,
-        "friendlyValue": "0.9275 ns"
-        }
-        ],
-        [
-        0.0515
-        ],
-        [
-        null
-        ],
-        [
-        null
-        ],
-        [
-        {
-        "value": 216.0,
-        "friendlyValue": "216 B"
-        }
-        ]
-        ],
-        [
-        "ResovlePaths",
-        "Default",
-        "*.txt",
-        [
-        {
-        "value": 3181540.57,
-        "friendlyValue": "3,181,540.57 ns"
-        }
-        ],
-        [
-        {
-        "value": 13676.108,
-        "friendlyValue": "13,676.1080 ns"
-        }
-        ],
-        [
-        {
-        "value": 12792.6399,
-        "friendlyValue": "12,792.6399 ns"
-        }
-        ],
-        [
-        62.5
-        ],
-        [
-        null
-        ],
-        [
-        null
-        ],
-        [
-        {
-        "value": 269616.0,
-        "friendlyValue": "269616 B"
-        }
-        ]
-        ],
-        [
-        "IsMatch",
-        "Default",
-        "file.txt",
-        [
-        {
-        "value": 250.8,
-        "friendlyValue": "250.80 ns"
-        }
-        ],
-        [
-        {
-        "value": 0.9915,
-        "friendlyValue": "0.9915 ns"
-        }
-        ],
-        [
-        {
-        "value": 0.9275,
-        "friendlyValue": "0.9275 ns"
-        }
+        "Dry"
         ],
         [
-        0.0515
-        ],
-        [
-        null
-        ],
-        [
-        null
-        ],
-        [
-        {
-        "value": 216.0,
-        "friendlyValue": "216 B"
-        }
-        ]
-        ],
-        [
-        "ResovlePaths",
-        "Default",
-        "file.txt",
-        [
-        {
-        "value": 3181540.57,
-        "friendlyValue": "3,181,540.57 ns"
-        }
-        ],
-        [
-        {
-        "value": 13676.108,
-        "friendlyValue": "13,676.1080 ns"
-        }
-        ],
-        [
-        {
-        "value": 12792.6399,
-        "friendlyValue": "12,792.6399 ns"
-        }
-        ],
-        [
-        62.5
-        ],
-        [
-        null
-        ],
-        [
-        null
-        ],
-        [
-        {
-        "value": 269616.0,
-        "friendlyValue": "269616 B"
-        }
-        ]
-        ],
-        [
-        "IsMatch",
-        "Default",
-        "mock/**/*.png",
-        [
-        {
-        "value": 250.8,
-        "friendlyValue": "250.80 ns"
-        }
-        ],
-        [
-        {
-        "value": 0.9915,
-        "friendlyValue": "0.9915 ns"
-        }
-        ],
-        [
-        {
-        "value": 0.9275,
-        "friendlyValue": "0.9275 ns"
-        }
-        ],
-        [
-        0.0515
-        ],
-        [
-        null
-        ],
-        [
-        null
-        ],
-        [
-        {
-        "value": 216.0,
-        "friendlyValue": "216 B"
-        }
-        ]
-        ],
-        [
-        "ResovlePaths",
-        "Default",
-        "mock/**/*.png",
+        "Algorithm B",
         [
-        {
-        "value": 3181540.57,
-        "friendlyValue": "3,181,540.57 ns"
-        }
+        { "value": 2, "friendlyValue": "2 ns" },
+        { "value": 8, "friendlyValue": "8 ns" },
+        { "value": 32, "friendlyValue": "32 ns" }
         ],
         [
-        {
-        "value": 13676.108,
-        "friendlyValue": "13,676.1080 ns"
-        }
+        { "value": 5, "friendlyValue": "5 B" },
+        { "value": 12, "friendlyValue": "12 B" },
+        { "value": 35, "friendlyValue": "35 B" }
         ],
-        [
-        {
-        "value": 12792.6399,
-        "friendlyValue": "12,792.6399 ns"
-        }
-        ],
-        [
-        62.5
-        ],
-        [
-        null
-        ],
-        [
-        null
-        ],
-        [
-        {
-        "value": 269616.0,
-        "friendlyValue": "269616 B"
-        }
-        ]
-        ],
-        [
-        "IsMatch",
-        "Default",
-        "temp/**/file.txt",
-        [
-        {
-        "value": 250.8,
-        "friendlyValue": "250.80 ns"
-        }
-        ],
-        [
-        {
-        "value": 0.9915,
-        "friendlyValue": "0.9915 ns"
-        }
-        ],
-        [
-        {
-        "value": 0.9275,
-        "friendlyValue": "0.9275 ns"
-        }
-        ],
-        [
-        0.0515
-        ],
-        [
-        null
-        ],
-        [
-        null
-        ],
-        [
-        {
-        "value": 216.0,
-        "friendlyValue": "216 B"
-        }
-        ]
-        ],
-        [
-        "ResovlePaths",
-        "Default",
-        "temp/**/file.txt",
-        [
-        {
-        "value": 3181540.57,
-        "friendlyValue": "3,181,540.57 ns"
-        }
-        ],
-        [
-        {
-        "value": 13676.108,
-        "friendlyValue": "13,676.1080 ns"
-        }
-        ],
-        [
-        {
-        "value": 12792.6399,
-        "friendlyValue": "12,792.6399 ns"
-        }
-        ],
-        [
-        62.5
-        ],
-        [
-        null
-        ],
-        [
-        null
-        ],
-        [
-        {
-        "value": 269616.0,
-        "friendlyValue": "269616 B"
-        }
-        ]
+        "Dry"
         ]
         ]
         }

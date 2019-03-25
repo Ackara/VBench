@@ -55,7 +55,8 @@ namespace VBench {
                     return this._data[i];
                 }
             }
-            return null;
+
+            return (this._data.length > 0 ? this._data[0] : null);
         }
     }
 }
