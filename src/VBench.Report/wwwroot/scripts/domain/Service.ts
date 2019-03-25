@@ -39,7 +39,8 @@ namespace VBench {
         // ===== Local Storage ===== //
 
         public static canUseLocalStorage(): boolean {
-            if (/Edge\/\d./i.test(navigator.userAgent) || /MSIE/i.test(navigator.userAgent)) {
+            // IE and Edge only have local storage for server documents.
+            if ((/file:\/\//i).test(window.location.href) && (/Edge\/\d./i.test(navigator.userAgent) || /MSIE/i.test(navigator.userAgent))) {
                 return false;
             }
 
