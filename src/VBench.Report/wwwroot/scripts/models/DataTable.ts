@@ -18,7 +18,7 @@ namespace VBench {
         public columns: KnockoutObservableArray<DataColumn>;
 
         public addColumn(model: any): DataColumn {
-            let newColumn = new DataColumn(this, model);
+            let newColumn = new DataColumn(this, model, this.columns().length);
             this.columns.push(newColumn);
             return newColumn;
         }
@@ -38,6 +38,12 @@ namespace VBench {
         public clear(): void {
             this.rows.removeAll();
             this.columns.removeAll();
+        }
+
+        public reset(): void {
+            for (let i = 0; i < this.columns().length; i++) {
+                this.columns()[i].isSelected(false);
+            }
         }
     }
 }

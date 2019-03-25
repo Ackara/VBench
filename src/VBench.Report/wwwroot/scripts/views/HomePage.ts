@@ -66,6 +66,17 @@ namespace VBench {
                 });
             }
             tabs[0].classList.add("is-active");
+
+            let sortButtons = document.getElementsByClassName("sortable");
+            for (let i = 0; i < sortButtons.length; i++) {
+                sortButtons[i].addEventListener("click", function (e) {
+                    me.timeline.data.reset();
+
+                    let context = ko.contextFor(this);
+                    let col = <DataColumn>context.$data;
+                    col.sort();
+                });
+            }
         }
     }
 }

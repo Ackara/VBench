@@ -105,7 +105,7 @@ namespace Acklann.VBench
                 result.Name = store.Name;
 
                 var columns = new List<CuratedDatasetColumn>();
-                foreach (var column in summary.Table.Columns.Where(x => x.NeedToShow))
+                foreach (var column in summary.Table.Columns.Where(x => x.NeedToShow || CuratedDatasetColumn.RequiredColumns.Contains(x.OriginalColumn.ColumnName)))
                 {
                     columns.Add(new CuratedDatasetColumn
                     {

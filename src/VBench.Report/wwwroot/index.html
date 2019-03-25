@@ -43,7 +43,7 @@
         <section>
             <div class="command-bar row p100 bg-color">
                 <div class="row baseline">
-                    <label>comparing: </label>
+                    <label>compare: </label>
                     <select id="compute-menu"
                             class="drop-down-menu column accent-color">
                         <option value="0">&Delta; previous</option>
@@ -56,6 +56,15 @@
                     <span>curves: </span>
                     <span class="chart-lines-btn-value accent-color">on</span>
                 </button>
+
+                <div class="row baseline">
+                    <label>jobs: </label>
+                    <select class="drop-down-menu column accent-color">
+                        <option selected>All</option>
+                        <option>Dry</option>
+                        <option>Short</option>
+                    </select>
+                </div>
             </div>
 
             <div class="tabs row w100"
@@ -69,8 +78,11 @@
                    data-bind="with: timeline">
                 <thead>
                     <tr data-bind="foreach: data.columns">
-                        <th class="ucase"
-                            data-bind="text: name, css: { 'is-active': isSelected }"></th>
+                        <th class="sortable ucase"
+                            data-bind="css: { 'is-active': isSelected }">
+                            <span data-bind="text: name"></span>
+                            <span class="float-r"><i class="sf-icon sf-icon-sort"></i></span>
+                        </th>
                     </tr>
                 </thead>
 

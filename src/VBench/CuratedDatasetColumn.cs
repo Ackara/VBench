@@ -24,6 +24,8 @@ namespace Acklann.VBench
             IsNumeric = true;
         }
 
+        public static string[] RequiredColumns = new string[] { "Job" };
+
         [JsonIgnore]
         public int Index { get; set; }
 

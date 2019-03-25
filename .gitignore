@@ -263,8 +263,11 @@ __pycache__/
 # Generated Files
 package-*.json
 art/export/
-*.map.*
 tools/
+*.map.*
+*.min.*
+*.css
+*.js
 
 # Sensitive Files
 [Aa]ppsetings.json

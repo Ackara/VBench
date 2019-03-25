@@ -6,8 +6,22 @@ thead {
     }
 
     th {
+        cursor: pointer;
         border-left-width: 2px;
         border-right-width: 2px;
+    }
+}
+
+th:hover {
+    .sf-icon-sort {
+        opacity: 1;
+    }
+}
+
+th.is-active {
+    .sf-icon-sort {
+        opacity: 1;
+        color: $accent-color-1;
     }
 }
 
@@ -79,6 +93,13 @@ th, td {
     opacity: 0;
     color: $subtle-text-color;
     transition: opacity ease-in 250ms;
+}
+
+.sf-icon-sort {
+    opacity: 0;
+    font-size: 0.90em;
+    vertical-align: baseline;
+    transition: opacity ease-in, 250ms;
 }
 
 /* MS-Edge */

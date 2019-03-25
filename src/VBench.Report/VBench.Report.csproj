@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
@@ -31,11 +31,8 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.1.1" />
   </ItemGroup>
   <ItemGroup Label="Images">
-    <Favicon Include="..\..\art\export\favicon.ico" />
-    <MetroStudioIconStylesheet Include="..\..\art\export\vbench\Embed Font in CSS\style.css" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="wwwroot\media\" />
+    <Favicon Include="..\..\art\favicon.ico" />
+    <MetroStudioIconStylesheet Include="..\..\art\bin\vbench\Embed Font in CSS\style.css" />
   </ItemGroup>
   <Target Name="ImportGeneratedImages" BeforeTargets="PreBuildEvent">
     <Copy Condition="Exists('@(Favicon)')" SourceFiles="@(Favicon)" DestinationFolder="wwwroot\" SkipUnchangedFiles="true" />

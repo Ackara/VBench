@@ -24,6 +24,7 @@ namespace VBench {
         public readonly typeId = DataCell.TypeCode;
         public readonly row: DataRow;
         public readonly columnIndex: number;
+        public rawValue: any;
 
         public unitKind: UnitType;
         public history: Array<any>;
@@ -42,21 +43,24 @@ namespace VBench {
             if (column.isNumeric && Array.isArray(model)) {
                 let array: Array<any> = this.history = model;
                 this.isNumeric(array.length >= 2);
-                
+
                 switch (column.unitKind) {
                     default:
                         this.value(array[array.length - 1]);
+                        this.rawValue = (array[array.length - 1]);
                         break;
 
                     case UnitType.time:
                     case UnitType.size:
                         let obj = array[array.length - 1];
                         this.value(obj ? obj.friendlyValue : null);
+                        this.rawValue = (obj ? obj.friendlyValue : null);
                         break;
                 }
             }
             else {
                 this.value(model);
+                this.rawValue = (model);
             }
         }
 
@@ -82,7 +86,7 @@ namespace VBench {
                     }
                     break;
             }
-            
+
             return points;
         }
 
