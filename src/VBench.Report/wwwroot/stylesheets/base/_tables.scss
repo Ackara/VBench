@@ -68,6 +68,10 @@ th, td {
 
     td.is-numeric {
         cursor: pointer;
+
+        .cell-value {
+            font-family: Consolas;
+        }
     }
 
     td.is-active {
@@ -86,7 +90,7 @@ th, td {
     }
 
 .cell-value {
-    font-family: $number-font;
+    white-space: pre;
 }
 
 .computed {
@@ -99,6 +103,7 @@ th, td {
     opacity: 0;
     font-size: 0.90em;
     vertical-align: baseline;
+    color: $subtle-text-color;
     transition: opacity ease-in, 250ms;
 }
 

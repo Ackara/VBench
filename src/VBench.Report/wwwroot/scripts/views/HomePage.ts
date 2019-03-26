@@ -11,7 +11,7 @@ namespace VBench {
             this.datasetTabs = ko.observableArray(datasetNames);
             this.selectedDataset = ko.observable(Service.getMostRecentDataset() || datasetNames[0]);
             this.selectedDataset.subscribe(function (newValue) { Service.saveMostRecentDataset(newValue); })
-            
+
             DataCell.comparisonKind = Service.getDeltaComparison();
             this.timeline = new Timeline(this._repository);
             this.timeline.changeDataset(this.selectedDataset());
@@ -25,7 +25,7 @@ namespace VBench {
         public datasetTabs: KnockoutObservableArray<string>;
 
         public attachEventHandlers(firstTime: boolean = false): void {
-            let me = this;
+            let me: HomePage = this;
 
             if (firstTime) {
                 let menu = <HTMLSelectElement>document.getElementById("compute-menu");
@@ -34,7 +34,7 @@ namespace VBench {
                     menu.addEventListener("click", function (e) {
                         DataCell.comparisonKind = menu.selectedIndex;
                         Service.saveComparisonKey(DataCell.comparisonKind);
-                        me.timeline.data.refresh();
+                        me.timeline.data.recalculate();
                     }, { passive: true });
                 }
 

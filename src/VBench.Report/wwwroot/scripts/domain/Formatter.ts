@@ -45,6 +45,18 @@ namespace VBench {
             }
         }
 
+        public static withLeadingSpace(value: string, count: number): string {
+            if (count <= 0) { return value; }
+
+            let whitespace = "";
+            let n = Math.abs(value.length - count);
+            for (let i = 0; i < n; i++) {
+                whitespace += " ";
+            }
+
+            return `${whitespace}${value}`;
+        }
+
         public static log(x: number, y: number): number {
             return Math.log(y) / Math.log(x);
         }

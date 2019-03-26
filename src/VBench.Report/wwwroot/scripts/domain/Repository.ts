@@ -30,6 +30,7 @@ namespace VBench {
             for (let i = 0; i < dataset.rows.length; i++) {
                 result.addRow(dataset.rows[i]);
             }
+            result.adjustColumns();
             result.sort();
 
             hosts.removeAll();

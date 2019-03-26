@@ -32,7 +32,7 @@ namespace VBench {
             return newRow;
         }
 
-        public refresh(): void {
+        public recalculate(): void {
             for (let i = 0; i < this.rows().length; i++) {
                 this.rows()[i].refresh();
             }
@@ -53,6 +53,16 @@ namespace VBench {
             for (let i = 0; i < this.columns().length; i++) {
                 if (this.columns()[i].isSelected()) {
                     this.columns()[i].sort(false);
+                }
+            }
+        }
+
+        public adjustColumns(): void {
+            for (let i = 0; i < this.columns().length; i++) {
+                let column = this.columns()[i];
+
+                if (!column.isHidden()) {
+                    this.columns()[i].alignCells();
                 }
             }
         }

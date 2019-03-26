@@ -1,5 +1,7 @@
 ﻿/// <reference path="../../../node_modules/@types/knockout/index.d.ts" />
+/// <reference path="../domain/Formatter.ts" />
 /// <reference path="../domain/UnitType.ts" />
+/// <reference path="../domain/Service.ts" />
 /// <reference path="../domain/Order.ts" />
 /// <reference path="DataTable.ts" />
 
@@ -58,6 +60,26 @@ namespace VBench {
                     else if (xv < yv) return 1;
                     else return 0;
                 });
+            }
+        }
+
+        public alignCells(): void {
+            let n = this.table.rows().length;
+            let max = -1, value = max;
+
+            for (let x = 0; x < n; x++) {
+                let cell = this.table.rows()[x].values()[this.index];
+                if (cell.isNumeric()) {
+                    value = `${cell.value()}`.length;
+                    if (value > max) { max = value; }
+                }
+            }
+
+            for (let x = 0; x < n; x++) {
+                let cell = this.table.rows()[x].values()[this.index];
+                if (cell.isNumeric()) {
+                    cell.value(Formatter.withLeadingSpace(cell.value(), max));
+                }
             }
         }
     }

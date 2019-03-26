@@ -56,8 +56,8 @@ namespace VBench {
                     case UnitType.time:
                     case UnitType.size:
                         let obj = array[array.length - 1];
-                        this.value(obj ? obj.friendlyValue : null);
-                        this.rawValue = (obj ? obj.friendlyValue : null);
+                        this.value((obj ? obj.friendlyValue : null));
+                        this.rawValue = (obj ? obj.value : null);
                         break;
                 }
             }
@@ -133,7 +133,7 @@ namespace VBench {
             else if (percentile > 999) output += ` (>999%)`;
             else output += ` (${(percentile >= 1 ? percentile.toFixed(0) : percentile.toFixed(2))}%)`;
 
-            this.difference(output);
+            this.difference(output.trim());
         }
     }
 }
