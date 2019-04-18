@@ -3,7 +3,7 @@
 namespace VBench {
     export class Formatter {
         public static formatAsTime(nanoseconds: number): string {
-            if (nanoseconds <= 1) return `${nanoseconds} ns`;
+            if (nanoseconds <= 1) return `${this.formatAsNumber(nanoseconds)} ns`;
 
             var dimensions = ["ns", "us", "ms", "s"];
             let index = Math.floor(Formatter.log(1000, nanoseconds));
@@ -46,15 +46,16 @@ namespace VBench {
         }
 
         public static withLeadingSpace(value: string, count: number): string {
-            if (count <= 0) { return value; }
+            if ((value) && count > 0) {
+                let whitespace = "";
+                let n = Math.abs(value.length - count);
+                for (let i = 0; i < n; i++) {
+                    whitespace += " ";
+                }
 
-            let whitespace = "";
-            let n = Math.abs(value.length - count);
-            for (let i = 0; i < n; i++) {
-                whitespace += " ";
+                return `${whitespace}${value}`;
             }
-
-            return `${whitespace}${value}`;
+            return value;
         }
 
         public static log(x: number, y: number): number {
