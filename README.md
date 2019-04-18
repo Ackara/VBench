@@ -1,6 +1,6 @@
 # VBench
 
-[![Nuget](https://img.shields.io/nuget/v/Acklann.VBench.svg)](https://www.nuget.org/packages/Acklann.VBench/)
+[![Nuget](https://img.shields.io/nuget/v/VBench.svg)](https://www.nuget.org/packages/VBench/)
 
 ## The Problem
 You are using [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet) to measure your project's performance. In addition, you also want to keep track of the project's performance over time however, [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet) do not have an exporter/report to track said changes.
