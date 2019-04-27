@@ -37,12 +37,12 @@ main section {
         }
     }
 
-        a:nth-child(odd) {
-            padding: {
-                left: 1em;
-                right: 1em;
-            }
+    a:nth-child(odd) {
+        padding: {
+            left: 1em;
+            right: 1em;
         }
+    }
 
     svg {
         width: 1em;
@@ -53,6 +53,10 @@ main section {
     i {
         font-size: inherit;
     }
+}
+
+.command-bar {
+    width: auto;
 }
 
 .command-bar > *:nth-child(even) {

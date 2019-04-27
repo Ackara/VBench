@@ -45,27 +45,36 @@ namespace VBench {
                     });
                 }
 
+                btn = document.getElementById("clean-btn");
+                if (btn) {
+                    btn.addEventListener("click", function (e) {
+                        localStorage.clear();
+                    });
+                }
+
                 let tabs = document.getElementsByClassName("tab-btn");
                 for (let i = 0; i < tabs.length; i++) {
                     tabs[i].addEventListener("click", function (e) {
                         let context = ko.contextFor(this);
-                        me.timeline.changeDataset(context.$data);
+                        me.timeline.changeDataset(context.$data, true);
                         me.selectedDataset(context.$data);
                         me.attachEventHandlers();
                     });
                 }
             }
 
-            document.getElementById("timeline-table").addEventListener("click", function (e) {
-                let context = ko.contextFor(e.target);
-                if (context.$data.typeId === DataCell.TypeCode) {
-                    let cell: DataCell = context.$data;
-                    if (cell.isNumeric()) {
-                        cell.isSelected(!cell.isSelected());
-                        me.timeline.updateChart(cell);
+            if (firstTime) {
+                document.getElementById("timeline-table").addEventListener("click", function (e) {
+                    let context = ko.contextFor(e.target);
+                    if (context.$data.typeId === DataCell.TypeCode) {
+                        let cell: DataCell = context.$data;
+                        if (cell.isNumeric()) {
+                            cell.isSelected(!cell.isSelected());
+                            me.timeline.updateChart(cell);
+                        }
                     }
-                }
-            });
+                });
+            }
 
             let sortButtons = document.getElementsByClassName("sortable");
             for (let i = 0; i < sortButtons.length; i++) {

@@ -45,3 +45,16 @@ button, .btn {
         background-color: $alt-background-color;
     }
 }
+
+.clean-btn {
+    @extend %btn;
+    position: absolute;
+    right: 0;
+    margin: 0 1em;
+    opacity: 0.75;
+    transition: opacity ease-in 250ms;
+
+    &:hover {
+        opacity: 1;
+    }
+}

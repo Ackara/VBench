@@ -19,6 +19,22 @@ namespace VBench {
         public rows: KnockoutObservableArray<DataRow>;
         public columns: KnockoutObservableArray<DataColumn>;
 
+        public getSelectedCells(): DataCell[] {
+            let results: DataCell[] = [];
+            for (let x = 0; x < this.rows().length; x++) {
+                let row = this.rows()[x];
+
+                for (var y = 0; y < row.values().length; y++) {
+                    let cell = row.values()[y];
+                    if (cell.isSelected()) {
+                        results.push(cell);
+                    }
+                }
+            }
+
+            return results;
+        }
+
         public addColumn(model: any): DataColumn {
             let newColumn = new DataColumn(this, model);
             Service.restoreColumn(newColumn);

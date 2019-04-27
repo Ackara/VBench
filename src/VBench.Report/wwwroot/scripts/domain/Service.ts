@@ -84,7 +84,7 @@ namespace VBench {
                 window.localStorage.setItem(key, `${column.order()}`);
 
                 window.localStorage.setItem(`${base}.selected`, `${column.isSelected()}`);
-                //console.debug(`set: ${key} = ${column.order() === Order.Asc ? 'Asc' : 'Desc'}`);
+                console.debug(`set: ${key} = ${column.order() === Order.Asc ? 'Asc' : 'Desc'}`);
             }
         }
 

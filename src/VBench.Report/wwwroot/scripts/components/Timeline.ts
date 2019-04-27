@@ -45,8 +45,9 @@ namespace VBench {
             }
         }
 
-        public changeDataset(datasetId: string = null): void {
+        public changeDataset(datasetId: string, update: boolean = false): void {
             //console.debug(`switching to ${datasetId} dataset.`);
+            this.data.clear();
             this._selectedDatasetId = (datasetId ? datasetId : this._selectedDatasetId);
             this._repository.loadData(this._selectedDatasetId, this.data, this.contributors);
             this.selectContributor(0);
@@ -54,6 +55,13 @@ namespace VBench {
             this._chart.data.labels.splice(0, this._chart.data.labels.length);
             while (this._chart.data.datasets.length > 0) {
                 this._chart.data.datasets.pop();
+            }
+
+            if (update) {
+                let selectedCells = this.data.getSelectedCells();
+                for (let i = 0; i < selectedCells.length; i++) {
+                    this.updateChart(selectedCells[i]);
+                }
             }
 
             this._chart.update();
